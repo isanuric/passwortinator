@@ -1,0 +1,11 @@
+{
+  "name": "Passwortinator",
+  "short_name": "PasswortGen",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#4F46E5",
+  "description": "A modern, secure password generator app.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}
