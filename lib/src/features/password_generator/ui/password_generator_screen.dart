@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../logic/password_generator_provider.dart';
 import 'widgets/action_buttons.dart';
 import 'widgets/length_slider.dart';
 import 'widgets/options_card.dart';
 import 'widgets/password_display_card.dart';
 
 /// Main screen of the Password Generator application.
+///
+/// This screen is intentionally thin: every child card is a `ConsumerWidget`
+/// that watches only the state it needs via `select`. A slider tick therefore
+/// only rebuilds the slider and the strength display instead of the whole
+/// widget hierarchy (options and action buttons stay untouched).
 class PasswordGeneratorScreen extends ConsumerWidget {
   const PasswordGeneratorScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(passwordGeneratorProvider);
-    final notifier = ref.read(passwordGeneratorProvider.notifier);
-
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -30,8 +31,8 @@ class PasswordGeneratorScreen extends ConsumerWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
+            child: const SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
                 horizontal: 20.0,
                 vertical: 16.0,
               ),
@@ -39,37 +40,20 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. Password Display with strength indicator & copy
-                  PasswordDisplayCard(
-                    password: state.password,
-                    strength: state.strength,
-                    entropy: state.entropy,
-                    onRegenerate: notifier.regenerate,
-                  ),
-                  const SizedBox(height: 16),
+                  PasswordDisplayCard(),
+                  SizedBox(height: 16),
 
                   // 2. Password Length Slider
-                  // Live: length/entropy/strength update while dragging.
-                  // Password is regenerated once when the drag ends.
-                  LengthSlider(
-                    length: state.config.length,
-                    onLengthChanged: notifier.setLength,
-                    onChangeEnd: notifier.regenerate,
-                  ),
-                  const SizedBox(height: 16),
+                  LengthSlider(),
+                  SizedBox(height: 16),
 
                   // 3. Character Options (Uppercase, Lowercase, Numbers, Symbols)
-                  OptionsCard(
-                    config: state.config,
-                    onToggleCategory: notifier.toggleCategory,
-                  ),
-                  const SizedBox(height: 24),
+                  OptionsCard(),
+                  SizedBox(height: 24),
 
                   // 4. Action Buttons (Regenerate & Copy)
-                  ActionButtons(
-                    password: state.password,
-                    onRegenerate: notifier.regenerate,
-                  ),
-                  const SizedBox(height: 24),
+                  ActionButtons(),
+                  SizedBox(height: 24),
                 ],
               ),
             ),

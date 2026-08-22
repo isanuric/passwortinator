@@ -16,79 +16,84 @@ class StrengthIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Strength status and entropy value row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  _getStrengthIcon(strength),
-                  size: 18,
-                  color: strength.color,
+    return Semantics(
+      container: true,
+      label: 'Password strength: ${strength.label}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Strength status and entropy value row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    _getStrengthIcon(strength),
+                    size: 18,
+                    color: strength.color,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Strength: ${strength.label}',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: strength.color,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: strength.color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: strength.color.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  'Strength: ${strength.label}',
-                  style: theme.textTheme.titleSmall?.copyWith(
+                child: Text(
+                  '${entropy.toStringAsFixed(1)} Bit Entropie',
+                  style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: strength.color,
                   ),
                 ),
-              ],
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: strength.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: strength.color.withValues(alpha: 0.3),
-                  width: 1,
-                ),
               ),
-              child: Text(
-                '${entropy.toStringAsFixed(1)} Bit Entropie',
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: strength.color,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
+            ],
+          ),
+          const SizedBox(height: 10),
 
-        // Segmented Strength Bar
-        Row(
-          children: [
-            _buildBarSegment(
-              context: context,
-              index: 0,
-              activeColor: strength.color,
-              isActive: true,
-            ),
-            const SizedBox(width: 6),
-            _buildBarSegment(
-              context: context,
-              index: 1,
-              activeColor: strength.color,
-              isActive: strength == PasswordStrength.medium ||
-                  strength == PasswordStrength.strong,
-            ),
-            const SizedBox(width: 6),
-            _buildBarSegment(
-              context: context,
-              index: 2,
-              activeColor: strength.color,
-              isActive: strength == PasswordStrength.strong,
-            ),
-          ],
-        ),
-      ],
+          // Segmented Strength Bar
+          Row(
+            children: [
+              _buildBarSegment(
+                context: context,
+                index: 0,
+                activeColor: strength.color,
+                isActive: true,
+              ),
+              const SizedBox(width: 6),
+              _buildBarSegment(
+                context: context,
+                index: 1,
+                activeColor: strength.color,
+                isActive: strength == PasswordStrength.medium ||
+                    strength == PasswordStrength.strong,
+              ),
+              const SizedBox(width: 6),
+              _buildBarSegment(
+                context: context,
+                index: 2,
+                activeColor: strength.color,
+                isActive: strength == PasswordStrength.strong,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

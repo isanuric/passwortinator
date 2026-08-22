@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import '../../models/password_strength.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../logic/password_generator_provider.dart';
 import '../clipboard_utils.dart';
 import 'strength_indicator.dart';
 
 /// Card widget displaying the generated password with copy action and strength indicator.
-class PasswordDisplayCard extends StatelessWidget {
-  const PasswordDisplayCard({
-    super.key,
-    required this.password,
-    required this.strength,
-    required this.entropy,
-    required this.onRegenerate,
-  });
-
-  final String password;
-  final PasswordStrength strength;
-  final double entropy;
-  final VoidCallback onRegenerate;
+///
+/// Watches only `password`, `strength` and `entropy` – it rebuilds when the
+/// password or its strength changes, but not on unrelated state updates.
+class PasswordDisplayCard extends ConsumerWidget {
+  const PasswordDisplayCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (password, strength, entropy) = ref.watch(
+      passwordGeneratorProvider.select(
+        (s) => (s.password, s.strength, s.entropy),
+      ),
+    );
+    final notifier = ref.read(passwordGeneratorProvider.notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
@@ -58,7 +57,7 @@ class PasswordDisplayCard extends StatelessWidget {
                       tooltip: 'Regenerate',
                       iconSize: 22,
                       color: colorScheme.primary,
-                      onPressed: onRegenerate,
+                      onPressed: notifier.regenerate,
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy_rounded),

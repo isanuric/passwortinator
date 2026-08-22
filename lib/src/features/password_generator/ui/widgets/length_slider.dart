@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../logic/password_generator_provider.dart';
 import '../../models/password_strength.dart';
 
 /// Card widget containing the password length slider control.
 ///
-/// Invokes [onLengthChanged] continuously while dragging (live preview of
-/// length/entropy/strength) and [onChangeEnd] once when the drag ends so the
-/// caller can defer the expensive password generation.
-class LengthSlider extends StatelessWidget {
-  const LengthSlider({
-    super.key,
-    required this.length,
-    required this.onLengthChanged,
-    required this.onChangeEnd,
-  });
-
-  final int length;
-  final ValueChanged<int> onLengthChanged;
-  final VoidCallback onChangeEnd;
+/// Watches only the current length. While dragging, [PasswordGeneratorNotifier.setLength]
+/// updates length/entropy/strength live; the expensive password generation is
+/// deferred to [PasswordGeneratorNotifier.regenerate], fired on drag end.
+class LengthSlider extends ConsumerWidget {
+  const LengthSlider({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final length = ref.watch(
+      passwordGeneratorProvider.select((s) => s.config.length),
+    );
+    final notifier = ref.read(passwordGeneratorProvider.notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -75,8 +72,8 @@ class LengthSlider extends StatelessWidget {
               max: AppConstants.maxPasswordLength.toDouble(),
               divisions: AppConstants.maxPasswordLength - AppConstants.minPasswordLength,
               label: length.toString(),
-              onChanged: (value) => onLengthChanged(value.round()),
-              onChangeEnd: (_) => onChangeEnd(),
+              onChanged: (value) => notifier.setLength(value.round()),
+              onChangeEnd: (_) => notifier.regenerate(),
             ),
 
             // Min and Max strength hints (weak -> strong)

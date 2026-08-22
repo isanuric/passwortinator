@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../logic/password_generator_provider.dart';
 import '../../models/password_config.dart';
 
 /// Card widget allowing users to configure which character sets to include.
-class OptionsCard extends StatelessWidget {
-  const OptionsCard({
-    super.key,
-    required this.config,
-    required this.onToggleCategory,
-  });
-
-  final PasswordConfig config;
-  final void Function(PasswordCategory category, bool isEnabled) onToggleCategory;
+///
+/// Watches only the configuration – it is not rebuilt when the password or
+/// the length slider changes.
+class OptionsCard extends ConsumerWidget {
+  const OptionsCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final config = ref.watch(
+      passwordGeneratorProvider.select((s) => s.config),
+    );
+    final notifier = ref.read(passwordGeneratorProvider.notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -53,26 +55,34 @@ class OptionsCard extends StatelessWidget {
             // Options Rows
             _buildOptionRow(
               context: context,
+              config: config,
               category: PasswordCategory.uppercase,
               icon: Icons.text_fields_rounded,
+              onToggleCategory: notifier.toggleCategory,
             ),
             const Divider(height: 1),
             _buildOptionRow(
               context: context,
+              config: config,
               category: PasswordCategory.lowercase,
               icon: Icons.format_size_rounded,
+              onToggleCategory: notifier.toggleCategory,
             ),
             const Divider(height: 1),
             _buildOptionRow(
               context: context,
+              config: config,
               category: PasswordCategory.numbers,
               icon: Icons.pin_rounded,
+              onToggleCategory: notifier.toggleCategory,
             ),
             const Divider(height: 1),
             _buildOptionRow(
               context: context,
+              config: config,
               category: PasswordCategory.special,
               icon: Icons.star_border_rounded,
+              onToggleCategory: notifier.toggleCategory,
             ),
           ],
         ),
@@ -82,8 +92,11 @@ class OptionsCard extends StatelessWidget {
 
   Widget _buildOptionRow({
     required BuildContext context,
+    required PasswordConfig config,
     required PasswordCategory category,
     required IconData icon,
+    required void Function(PasswordCategory category, bool isEnabled)
+        onToggleCategory,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -116,7 +129,9 @@ class OptionsCard extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: !canToggle && isEnabled
                 ? colorScheme.onSurface
-                : (isEnabled ? colorScheme.onSurface : colorScheme.onSurfaceVariant),
+                : (isEnabled
+                    ? colorScheme.onSurface
+                    : colorScheme.onSurfaceVariant),
           ),
         ),
         subtitle: Text(
