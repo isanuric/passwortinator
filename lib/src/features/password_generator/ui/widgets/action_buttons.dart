@@ -16,8 +16,8 @@ class ActionButtons extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: password));
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
+      const SnackBar(
+        content: Row(
           children: [
             Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
             SizedBox(width: 10),
@@ -27,8 +27,8 @@ class ActionButtons extends StatelessWidget {
             ),
           ],
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: const Color(0xFF1E293B),
+        duration: Duration(seconds: 2),
+        backgroundColor: Color(0xFF1E293B),
       ),
     );
   }

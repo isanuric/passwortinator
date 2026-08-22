@@ -98,8 +98,8 @@ class OptionsCard extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isEnabled
-                ? colorScheme.primaryContainer.withOpacity(0.7)
-                : colorScheme.surfaceVariant.withOpacity(0.5),
+                ? colorScheme.primaryContainer.withValues(alpha: 0.7)
+                : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -107,7 +107,7 @@ class OptionsCard extends StatelessWidget {
             size: 20,
             color: isEnabled
                 ? colorScheme.primary
-                : colorScheme.onSurfaceVariant.withOpacity(0.6),
+                : colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
           ),
         ),
         title: Text(
@@ -122,7 +122,7 @@ class OptionsCard extends StatelessWidget {
         subtitle: Text(
           '${category.subtitle} (${category.example})',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant.withOpacity(0.8),
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
           ),
         ),
         value: isEnabled,

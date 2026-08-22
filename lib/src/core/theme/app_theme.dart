@@ -35,7 +35,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.5),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -70,7 +70,7 @@ class AppTheme {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
         activeTrackColor: colorScheme.primary,
-        inactiveTrackColor: colorScheme.primaryContainer.withOpacity(0.4),
+        inactiveTrackColor: colorScheme.primaryContainer.withValues(alpha: 0.4),
         thumbColor: colorScheme.primary,
       ),
       snackBarTheme: SnackBarThemeData(
@@ -111,7 +111,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -146,7 +146,7 @@ class AppTheme {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
         activeTrackColor: colorScheme.primary,
-        inactiveTrackColor: colorScheme.primaryContainer.withOpacity(0.3),
+        inactiveTrackColor: colorScheme.primaryContainer.withValues(alpha: 0.3),
         thumbColor: colorScheme.primary,
       ),
       snackBarTheme: SnackBarThemeData(

@@ -22,8 +22,8 @@ class PasswordDisplayCard extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: password));
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
+      const SnackBar(
+        content: Row(
           children: [
             Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
             SizedBox(width: 10),
@@ -33,8 +33,8 @@ class PasswordDisplayCard extends StatelessWidget {
             ),
           ],
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: const Color(0xFF1E293B),
+        duration: Duration(seconds: 2),
+        backgroundColor: Color(0xFF1E293B),
       ),
     );
   }
@@ -99,11 +99,11 @@ class PasswordDisplayCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               decoration: BoxDecoration(
                 color: isDark
-                    ? colorScheme.surfaceVariant.withOpacity(0.3)
-                    : colorScheme.surfaceVariant.withOpacity(0.5),
+                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
+                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: colorScheme.outlineVariant.withOpacity(0.4),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
                   width: 1,
                 ),
               ),
