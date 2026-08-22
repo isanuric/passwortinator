@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import '../../../core/constants/app_constants.dart';
 import '../models/password_config.dart';
 
 /// Cryptographically secure service for generating passwords and calculating entropy.
@@ -34,7 +33,20 @@ class PasswordGeneratorService {
   /// 1. Exactly one character is drawn from each enabled category first.
   /// 2. The remaining characters are drawn uniformly from the combined active pool.
   /// 3. The entire character array is shuffled securely before returning.
+  ///
+  /// Throws [ArgumentError] if [config.length] is smaller than the number of
+  /// active categories – in that case the exact length cannot be guaranteed
+  /// while still including every enabled character set.
   String generatePassword(PasswordConfig config) {
+    final int activeCategories = config.activeCategoriesCount;
+    if (config.length < activeCategories) {
+      throw ArgumentError(
+        'Password length (${config.length}) must be at least the number of '
+        'active categories ($activeCategories) to guarantee one character '
+        'per category.',
+      );
+    }
+
     final random = _secureRandom;
     final List<String> guaranteedCharacters = [];
     final StringBuffer combinedPool = StringBuffer();
@@ -42,37 +54,37 @@ class PasswordGeneratorService {
     // 1. Guarantee logic: Draw exactly one random character per active category
     if (config.includeUppercase) {
       guaranteedCharacters.add(
-        _getRandomChar(AppConstants.uppercaseCharacters, random),
+        _getRandomChar(config.getPool(PasswordCategory.uppercase), random),
       );
-      combinedPool.write(AppConstants.uppercaseCharacters);
+      combinedPool.write(config.getPool(PasswordCategory.uppercase));
     }
 
     if (config.includeLowercase) {
       guaranteedCharacters.add(
-        _getRandomChar(AppConstants.lowercaseCharacters, random),
+        _getRandomChar(config.getPool(PasswordCategory.lowercase), random),
       );
-      combinedPool.write(AppConstants.lowercaseCharacters);
+      combinedPool.write(config.getPool(PasswordCategory.lowercase));
     }
 
     if (config.includeNumbers) {
       guaranteedCharacters.add(
-        _getRandomChar(AppConstants.numberCharacters, random),
+        _getRandomChar(config.getPool(PasswordCategory.numbers), random),
       );
-      combinedPool.write(AppConstants.numberCharacters);
+      combinedPool.write(config.getPool(PasswordCategory.numbers));
     }
 
     if (config.includeSpecial) {
       guaranteedCharacters.add(
-        _getRandomChar(AppConstants.specialCharacters, random),
+        _getRandomChar(config.getPool(PasswordCategory.special), random),
       );
-      combinedPool.write(AppConstants.specialCharacters);
+      combinedPool.write(config.getPool(PasswordCategory.special));
     }
 
     if (config.includeSpecialStrict) {
       guaranteedCharacters.add(
-        _getRandomChar(AppConstants.strictSpecialCharacters, random),
+        _getRandomChar(config.getPool(PasswordCategory.specialStrict), random),
       );
-      combinedPool.write(AppConstants.strictSpecialCharacters);
+      combinedPool.write(config.getPool(PasswordCategory.specialStrict));
     }
 
     final String poolString = combinedPool.toString();

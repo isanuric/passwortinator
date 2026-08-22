@@ -35,7 +35,7 @@ void main() {
       expect(find.text('Passwortinator'), findsOneWidget);
       expect(find.byType(SelectableText), findsOneWidget);
       expect(find.byType(Slider), findsOneWidget);
-      expect(find.byType(FilterChip), findsNWidgets(5));
+      expect(find.byType(FilterChip), findsNWidgets(6));
       expect(find.text('Regenerate'), findsOneWidget);
       expect(find.byTooltip('Copy'), findsOneWidget);
       expect(characterCountFinder(), findsOneWidget);
@@ -97,6 +97,55 @@ void main() {
         calls.any((c) => c.method == 'Clipboard.setData'),
         isTrue,
       );
+
+      // Let the auto-clear timer fire (default: 60 s) so no timer is pending.
+      await tester.pump(const Duration(seconds: 61));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('copy auto-clears the clipboard after 60 seconds',
+        (tester) async {
+      final clipboard = <String, Object?>{};
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          switch (call.method) {
+            case 'Clipboard.setData':
+              clipboard['text'] = (call.arguments as Map)['text'];
+              return null;
+            case 'Clipboard.getData':
+              return {'text': clipboard['text']};
+          }
+          return null;
+        },
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      // Copy the password.
+      final password = tester
+          .widget<SelectableText>(find.byType(SelectableText))
+          .data!;
+      await tapVisible(tester, find.byTooltip('Copy'));
+
+      expect(clipboard['text'], equals(password));
+
+      // Shortly before the deadline the password is still there.
+      await tester.pump(const Duration(seconds: 59));
+      expect(clipboard['text'], equals(password));
+
+      // After the 60 s deadline the clipboard has been wiped.
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(clipboard['text'], equals(''));
     });
 
     testWidgets('dragging the length slider updates the character count',
@@ -127,10 +176,11 @@ void main() {
     testWidgets('last active category cannot be disabled', (tester) async {
       await tester.pumpWidget(buildApp());
 
-      expect(find.byType(FilterChip), findsNWidgets(5));
+      expect(find.byType(FilterChip), findsNWidgets(6));
 
-      // Disable lowercase, numbers and special (Strict is already off)
-      // one by one, leaving only the first (uppercase) chip active.
+      // Disable lowercase (1), numbers (2) and special (3) one by one. Strict
+      // (4) is already off and "0O 1l" (5) is a standalone toggle, so only
+      // the first (uppercase) category chip stays active.
       for (var i = 1; i < 4; i++) {
         await tester.ensureVisible(find.byType(FilterChip).at(i));
         await tester.pumpAndSettle();

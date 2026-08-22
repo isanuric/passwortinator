@@ -25,47 +25,54 @@ class OptionsCard extends ConsumerWidget {
         spacing: 8,
         runSpacing: 8,
         children: [
-          _buildChip(
+          _buildCategoryChip(
             context: context,
             config: config,
             category: PasswordCategory.uppercase,
             label: 'A-Z',
             notifier: notifier,
           ),
-          _buildChip(
+          _buildCategoryChip(
             context: context,
             config: config,
             category: PasswordCategory.lowercase,
             label: 'a-z',
             notifier: notifier,
           ),
-          _buildChip(
+          _buildCategoryChip(
             context: context,
             config: config,
             category: PasswordCategory.numbers,
             label: '0-9',
             notifier: notifier,
           ),
-          _buildChip(
+          _buildCategoryChip(
             context: context,
             config: config,
             category: PasswordCategory.special,
             label: '!@#',
             notifier: notifier,
           ),
-          _buildChip(
+          _buildCategoryChip(
             context: context,
             config: config,
             category: PasswordCategory.specialStrict,
             label: 'Strict',
             notifier: notifier,
           ),
+          _buildBooleanChip(
+            context: context,
+            label: '0O 1l',
+            tooltip: 'Exclude similar characters (0/O, 1/l/I)',
+            selected: config.excludeAmbiguous,
+            onSelected: notifier.setExcludeAmbiguous,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildChip({
+  Widget _buildCategoryChip({
     required BuildContext context,
     required PasswordConfig config,
     required PasswordCategory category,
@@ -102,6 +109,47 @@ class OptionsCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    );
+  }
+
+  /// A boolean toggle chip (e.g. "exclude similar characters"). Unlike the
+  /// category chips it can always be switched off again – there is no
+  /// "last active" rule for it.
+  Widget _buildBooleanChip({
+    required BuildContext context,
+    required String label,
+    required String tooltip,
+    required bool selected,
+    required void Function(bool) onSelected,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Tooltip(
+      message: tooltip,
+      child: FilterChip(
+        label: Text(label),
+        selected: selected,
+        showCheckmark: false,
+        onSelected: onSelected,
+        visualDensity: VisualDensity.compact,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        labelStyle: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: selected ? cs.secondary : cs.onSurfaceVariant,
+        ),
+        selectedColor: cs.secondaryContainer.withValues(alpha: 0.6),
+        backgroundColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+        side: BorderSide(
+          color: selected
+              ? cs.secondary.withValues(alpha: 0.7)
+              : cs.outlineVariant,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      ),
     );
   }
 }

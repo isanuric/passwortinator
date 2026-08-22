@@ -84,6 +84,31 @@ void main() {
       expect(state.config.activeCategoriesCount, equals(1));
     });
 
+    test('setExcludeAmbiguous toggles the option and regenerates', () {
+      final notifier = container.read(passwordGeneratorProvider.notifier);
+      final initialPassword =
+          container.read(passwordGeneratorProvider).password;
+
+      notifier.setExcludeAmbiguous(true);
+      var state = container.read(passwordGeneratorProvider);
+
+      expect(state.config.excludeAmbiguous, isTrue);
+      // The pool shrank, so entropy drops accordingly...
+      expect(state.config.totalPoolSize, equals(72)); // 26+26+10+16 → 24+24+8+16
+      // ...and a fresh password was generated (pool changed).
+      expect(state.password, isNot(equals(initialPassword)));
+
+      notifier.setExcludeAmbiguous(false);
+      state = container.read(passwordGeneratorProvider);
+      expect(state.config.excludeAmbiguous, isFalse);
+      expect(state.config.totalPoolSize, equals(78));
+
+      // Setting the same value again is a no-op.
+      notifier.setExcludeAmbiguous(false);
+      expect(container.read(passwordGeneratorProvider).password,
+          equals(state.password));
+    });
+
     test('regenerate generates a new password', () {
       final notifier = container.read(passwordGeneratorProvider.notifier);
       final initialPassword =

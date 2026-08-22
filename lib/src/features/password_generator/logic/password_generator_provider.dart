@@ -70,6 +70,15 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
     state = _computeState(updatedConfig);
   }
 
+  /// Toggles excluding visually ambiguous characters (0/O, 1/l/I).
+  ///
+  /// Recomputes the state including a fresh password, since the pool changes.
+  void setExcludeAmbiguous(bool value) {
+    if (state.config.excludeAmbiguous == value) return;
+    final updatedConfig = state.config.copyWith(excludeAmbiguous: value);
+    state = _computeState(updatedConfig);
+  }
+
   /// Manually triggers generation of a new password with the existing
   /// configuration (uses the current config, including the latest length).
   void regenerate() {

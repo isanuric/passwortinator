@@ -115,6 +115,65 @@ void main() {
       }
     });
 
+    test('throws ArgumentError when length is smaller than active categories',
+        () {
+      // 5 categories active, but only 3 characters requested.
+      const tooShort = PasswordConfig(
+        length: 3,
+        includeUppercase: true,
+        includeLowercase: true,
+        includeNumbers: true,
+        includeSpecial: true,
+        includeSpecialStrict: true,
+      );
+
+      expect(
+        () => service.generatePassword(tooShort),
+        throwsArgumentError,
+      );
+
+      // Exactly matching length is allowed and yields that exact length.
+      const exact = PasswordConfig(
+        length: 5,
+        includeUppercase: true,
+        includeLowercase: true,
+        includeNumbers: true,
+        includeSpecial: true,
+        includeSpecialStrict: true,
+      );
+      expect(service.generatePassword(exact).length, equals(5));
+    });
+
+    test('excludes ambiguous characters when configured', () {
+      const config = PasswordConfig(
+        length: 20,
+        excludeAmbiguous: true,
+      );
+
+      final ambiguous = RegExp('[${AppConstants.ambiguousCharacters}]');
+      for (int i = 0; i < 50; i++) {
+        final password = service.generatePassword(config);
+        expect(password.length, equals(20));
+        expect(ambiguous.hasMatch(password), isFalse,
+            reason: 'Password must not contain 0/O/1/l/I with exclusion on');
+      }
+    });
+
+    test('entropy reflects smaller pools when ambiguous chars are excluded',
+        () {
+      // Default pools: 26 + 26 + 10 + 16 = 78
+      // With ambiguous exclusion: 24 + 24 + 8 + 16 = 72
+      const config = PasswordConfig(
+        length: 16,
+        excludeAmbiguous: true,
+      );
+      expect(config.totalPoolSize, equals(72));
+
+      // E = 16 * log2(72) ≈ 98.72 bits (less than 100.57 without exclusion).
+      final entropy = service.calculateEntropy(config);
+      expect(entropy, closeTo(98.72, 0.05));
+    });
+
     test('generates unique passwords across multiple invocations', () {
       const config = PasswordConfig(length: 16);
       final set = <String>{};

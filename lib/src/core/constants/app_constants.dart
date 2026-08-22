@@ -41,6 +41,18 @@ class AppConstants {
   static const int specialPoolSize = 16;
   static const int strictSpecialPoolSize = 16;
 
+  /// Characters that look alike and are frequently confused when typing or
+  /// reading a password (0/O, 1/l/I). Excluding them is an option in
+  /// professional generators (1Password, Bitwarden, KeePass) to make
+  /// passwords easier to read aloud and retype.
+  static const String ambiguousCharacters = 'IOlo10';
+
+  /// Number of ambiguous characters removed from each pool when the
+  /// `excludeAmbiguous` option is enabled.
+  static const int ambiguousUppercaseCount = 2; // I, O
+  static const int ambiguousLowercaseCount = 2; // l, o
+  static const int ambiguousNumberCount = 2; // 1, 0
+
   /// Entropy thresholds in bits.
   static const double weakThreshold = 50.0;
   static const double strongThreshold = 70.0;

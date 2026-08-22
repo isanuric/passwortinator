@@ -50,6 +50,7 @@ class PasswordConfig {
     this.includeNumbers = true,
     this.includeSpecial = true,
     this.includeSpecialStrict = false,
+    this.excludeAmbiguous = false,
   });
 
   /// The desired length of the generated password.
@@ -71,6 +72,36 @@ class PasswordConfig {
   /// brackets, pipe, braces) that some backends may reject.
   final bool includeSpecialStrict;
 
+  /// Whether to exclude visually ambiguous characters (0/O, 1/l/I) that are
+  /// easy to confuse when reading or retyping a password.
+  final bool excludeAmbiguous;
+
+  /// The raw character set for a category, independent of [excludeAmbiguous].
+  static String rawCharacters(PasswordCategory category) {
+    switch (category) {
+      case PasswordCategory.uppercase:
+        return AppConstants.uppercaseCharacters;
+      case PasswordCategory.lowercase:
+        return AppConstants.lowercaseCharacters;
+      case PasswordCategory.numbers:
+        return AppConstants.numberCharacters;
+      case PasswordCategory.special:
+        return AppConstants.specialCharacters;
+      case PasswordCategory.specialStrict:
+        return AppConstants.strictSpecialCharacters;
+    }
+  }
+
+  /// The effective character pool for [category], honoring [excludeAmbiguous].
+  String getPool(PasswordCategory category) {
+    final raw = rawCharacters(category);
+    if (!excludeAmbiguous) return raw;
+    return raw.replaceAll(
+      RegExp('[${AppConstants.ambiguousCharacters}]'),
+      '',
+    );
+  }
+
   /// Returns the number of currently active character categories.
   int get activeCategoriesCount {
     int count = 0;
@@ -84,22 +115,42 @@ class PasswordConfig {
 
   /// Calculates the total character pool size (R) based on active categories.
   ///
-  /// Pool sizes:
-  /// - a-z: 26
-  /// - A-Z: 26
-  /// - 0-9: 10
-  /// - Special characters: 16
-  /// - Strict special characters: 16
+  /// When [excludeAmbiguous] is enabled, the ambiguous characters are removed
+  /// from the pool sizes so the displayed entropy stays honest.
   int get totalPoolSize {
     int poolSize = 0;
-    if (includeUppercase) poolSize += AppConstants.uppercasePoolSize;
-    if (includeLowercase) poolSize += AppConstants.lowercasePoolSize;
-    if (includeNumbers) poolSize += AppConstants.numberPoolSize;
-    if (includeSpecial) poolSize += AppConstants.specialPoolSize;
+    if (includeUppercase) {
+      poolSize += _poolSizeFor(PasswordCategory.uppercase);
+    }
+    if (includeLowercase) {
+      poolSize += _poolSizeFor(PasswordCategory.lowercase);
+    }
+    if (includeNumbers) {
+      poolSize += _poolSizeFor(PasswordCategory.numbers);
+    }
+    if (includeSpecial) {
+      poolSize += _poolSizeFor(PasswordCategory.special);
+    }
     if (includeSpecialStrict) {
-      poolSize += AppConstants.strictSpecialPoolSize;
+      poolSize += _poolSizeFor(PasswordCategory.specialStrict);
     }
     return poolSize;
+  }
+
+  int _poolSizeFor(PasswordCategory category) {
+    final raw = rawCharacters(category).length;
+    if (!excludeAmbiguous) return raw;
+    switch (category) {
+      case PasswordCategory.uppercase:
+        return raw - AppConstants.ambiguousUppercaseCount;
+      case PasswordCategory.lowercase:
+        return raw - AppConstants.ambiguousLowercaseCount;
+      case PasswordCategory.numbers:
+        return raw - AppConstants.ambiguousNumberCount;
+      case PasswordCategory.special:
+      case PasswordCategory.specialStrict:
+        return raw; // no ambiguous special characters are excluded
+    }
   }
 
   /// Checks whether a specific category is enabled.
@@ -139,6 +190,7 @@ class PasswordConfig {
     bool? includeNumbers,
     bool? includeSpecial,
     bool? includeSpecialStrict,
+    bool? excludeAmbiguous,
   }) {
     return PasswordConfig(
       length: length ?? this.length,
@@ -146,7 +198,9 @@ class PasswordConfig {
       includeLowercase: includeLowercase ?? this.includeLowercase,
       includeNumbers: includeNumbers ?? this.includeNumbers,
       includeSpecial: includeSpecial ?? this.includeSpecial,
-      includeSpecialStrict: includeSpecialStrict ?? this.includeSpecialStrict,
+      includeSpecialStrict:
+          includeSpecialStrict ?? this.includeSpecialStrict,
+      excludeAmbiguous: excludeAmbiguous ?? this.excludeAmbiguous,
     );
   }
 
@@ -160,7 +214,8 @@ class PasswordConfig {
           includeLowercase == other.includeLowercase &&
           includeNumbers == other.includeNumbers &&
           includeSpecial == other.includeSpecial &&
-          includeSpecialStrict == other.includeSpecialStrict;
+          includeSpecialStrict == other.includeSpecialStrict &&
+          excludeAmbiguous == other.excludeAmbiguous;
 
   @override
   int get hashCode => Object.hash(
@@ -170,12 +225,14 @@ class PasswordConfig {
         includeNumbers,
         includeSpecial,
         includeSpecialStrict,
+        excludeAmbiguous,
       );
 
   @override
   String toString() {
     return 'PasswordConfig(length: $length, uppercase: $includeUppercase, '
         'lowercase: $includeLowercase, numbers: $includeNumbers, '
-        'special: $includeSpecial, strictSpecial: $includeSpecialStrict)';
+        'special: $includeSpecial, strictSpecial: $includeSpecialStrict, '
+        'excludeAmbiguous: $excludeAmbiguous)';
   }
 }
