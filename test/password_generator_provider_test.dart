@@ -21,12 +21,16 @@ void main() {
 
       expect(state.config.length, equals(AppConstants.defaultPasswordLength));
       expect(state.password.length, equals(AppConstants.defaultPasswordLength));
-      expect(state.entropy, greaterThan(70.0)); // All categories active with length 16 is strong
+      expect(state.entropy,
+          greaterThan(70.0)); // All categories active with length 16 is strong
     });
 
-    test('setLength updates length and entropy live without regenerating password', () {
+    test(
+        'setLength updates length and entropy live without regenerating password',
+        () {
       final notifier = container.read(passwordGeneratorProvider.notifier);
-      final initialPassword = container.read(passwordGeneratorProvider).password;
+      final initialPassword =
+          container.read(passwordGeneratorProvider).password;
       final initialEntropy = container.read(passwordGeneratorProvider).entropy;
 
       notifier.setLength(24);
@@ -82,7 +86,8 @@ void main() {
 
     test('regenerate generates a new password', () {
       final notifier = container.read(passwordGeneratorProvider.notifier);
-      final initialPassword = container.read(passwordGeneratorProvider).password;
+      final initialPassword =
+          container.read(passwordGeneratorProvider).password;
 
       // Note: In extremely rare case it could match if short, but at length 16 with 94 chars pool it's virtually impossible
       notifier.regenerate();

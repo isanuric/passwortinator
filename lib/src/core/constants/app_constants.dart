@@ -20,15 +20,26 @@ class AppConstants {
   /// Numeric digit characters (10 characters).
   static const String numberCharacters = '0123456789';
 
-  /// Standard ASCII special characters (32 characters).
-  static const String specialCharacters =
-      r'''!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~''';
+  /// Common special characters that are widely accepted across systems (16).
+  ///
+  /// These symbols rarely cause issues in password fields, URLs, SQL or shell
+  /// environments and are safe to use almost anywhere.
+  static const String specialCharacters = r'!@#$%^&*()_-+=?~';
+
+  /// Strict special characters that some backends reject or mangle (16).
+  ///
+  /// Quotes, backslash, backtick, angle brackets, pipe and braces can trigger
+  /// escaping problems or validation failures in certain legacy or strict
+  /// systems (SAP, banking, shells, HTML/XML forms). They are off by default
+  /// and can be enabled explicitly when broad compatibility is not required.
+  static const String strictSpecialCharacters = r'''"'`\,./:;<>|{}[]''';
 
   /// Character pool sizes for entropy calculation.
   static const int lowercasePoolSize = 26;
   static const int uppercasePoolSize = 26;
   static const int numberPoolSize = 10;
-  static const int specialPoolSize = 32;
+  static const int specialPoolSize = 16;
+  static const int strictSpecialPoolSize = 16;
 
   /// Entropy thresholds in bits.
   static const double weakThreshold = 50.0;

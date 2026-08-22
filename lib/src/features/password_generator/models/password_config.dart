@@ -22,6 +22,11 @@ enum PasswordCategory {
     title: 'Special characters',
     subtitle: r'!@#$%^&*...',
     example: '!@#...',
+  ),
+  specialStrict(
+    title: 'Strict special characters',
+    subtitle: r'''"'\`/<>|{}...''',
+    example: r'''"'\''',
   );
 
   const PasswordCategory({
@@ -44,6 +49,7 @@ class PasswordConfig {
     this.includeLowercase = true,
     this.includeNumbers = true,
     this.includeSpecial = true,
+    this.includeSpecialStrict = false,
   });
 
   /// The desired length of the generated password.
@@ -61,6 +67,10 @@ class PasswordConfig {
   /// Whether to include special punctuation characters.
   final bool includeSpecial;
 
+  /// Whether to include strict special characters (quotes, backslash, angle
+  /// brackets, pipe, braces) that some backends may reject.
+  final bool includeSpecialStrict;
+
   /// Returns the number of currently active character categories.
   int get activeCategoriesCount {
     int count = 0;
@@ -68,6 +78,7 @@ class PasswordConfig {
     if (includeLowercase) count++;
     if (includeNumbers) count++;
     if (includeSpecial) count++;
+    if (includeSpecialStrict) count++;
     return count;
   }
 
@@ -77,13 +88,17 @@ class PasswordConfig {
   /// - a-z: 26
   /// - A-Z: 26
   /// - 0-9: 10
-  /// - Special characters: 32
+  /// - Special characters: 16
+  /// - Strict special characters: 16
   int get totalPoolSize {
     int poolSize = 0;
     if (includeUppercase) poolSize += AppConstants.uppercasePoolSize;
     if (includeLowercase) poolSize += AppConstants.lowercasePoolSize;
     if (includeNumbers) poolSize += AppConstants.numberPoolSize;
     if (includeSpecial) poolSize += AppConstants.specialPoolSize;
+    if (includeSpecialStrict) {
+      poolSize += AppConstants.strictSpecialPoolSize;
+    }
     return poolSize;
   }
 
@@ -98,6 +113,8 @@ class PasswordConfig {
         return includeNumbers;
       case PasswordCategory.special:
         return includeSpecial;
+      case PasswordCategory.specialStrict:
+        return includeSpecialStrict;
     }
   }
 
@@ -121,6 +138,7 @@ class PasswordConfig {
     bool? includeLowercase,
     bool? includeNumbers,
     bool? includeSpecial,
+    bool? includeSpecialStrict,
   }) {
     return PasswordConfig(
       length: length ?? this.length,
@@ -128,6 +146,7 @@ class PasswordConfig {
       includeLowercase: includeLowercase ?? this.includeLowercase,
       includeNumbers: includeNumbers ?? this.includeNumbers,
       includeSpecial: includeSpecial ?? this.includeSpecial,
+      includeSpecialStrict: includeSpecialStrict ?? this.includeSpecialStrict,
     );
   }
 
@@ -140,7 +159,8 @@ class PasswordConfig {
           includeUppercase == other.includeUppercase &&
           includeLowercase == other.includeLowercase &&
           includeNumbers == other.includeNumbers &&
-          includeSpecial == other.includeSpecial;
+          includeSpecial == other.includeSpecial &&
+          includeSpecialStrict == other.includeSpecialStrict;
 
   @override
   int get hashCode => Object.hash(
@@ -149,11 +169,13 @@ class PasswordConfig {
         includeLowercase,
         includeNumbers,
         includeSpecial,
+        includeSpecialStrict,
       );
 
   @override
   String toString() {
     return 'PasswordConfig(length: $length, uppercase: $includeUppercase, '
-        'lowercase: $includeLowercase, numbers: $includeNumbers, special: $includeSpecial)';
+        'lowercase: $includeLowercase, numbers: $includeNumbers, '
+        'special: $includeSpecial, strictSpecial: $includeSpecialStrict)';
   }
 }

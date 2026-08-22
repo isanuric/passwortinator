@@ -92,8 +92,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(buildApp());
 
-      String countLabel() =>
-          tester.widget<Text>(characterCountFinder()).data!;
+      String countLabel() => tester.widget<Text>(characterCountFinder()).data!;
 
       expect(countLabel(), contains('16'));
 
@@ -105,8 +104,7 @@ void main() {
       expect(countLabel(), isNot(contains('16')));
     });
 
-    testWidgets('slider clamps to min and max allowed lengths',
-        (tester) async {
+    testWidgets('slider clamps to min and max allowed lengths', (tester) async {
       await tester.pumpWidget(buildApp());
 
       final slider = tester.widget<Slider>(find.byType(Slider));
@@ -118,7 +116,7 @@ void main() {
     testWidgets('last active category cannot be disabled', (tester) async {
       await tester.pumpWidget(buildApp());
 
-      expect(find.byType(SwitchListTile), findsNWidgets(4));
+      expect(find.byType(SwitchListTile), findsNWidgets(5));
 
       // Disable the last three categories one by one
       for (var i = 1; i < 4; i++) {

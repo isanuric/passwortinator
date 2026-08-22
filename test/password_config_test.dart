@@ -10,8 +10,23 @@ void main() {
       expect(config.includeLowercase, isTrue);
       expect(config.includeNumbers, isTrue);
       expect(config.includeSpecial, isTrue);
+      expect(config.includeSpecialStrict, isFalse); // off by default
       expect(config.activeCategoriesCount, equals(4));
-      expect(config.totalPoolSize, equals(94)); // 26 + 26 + 10 + 32
+      expect(config.totalPoolSize, equals(78)); // 26 + 26 + 10 + 16
+    });
+
+    test(
+        'strict special characters add to pool and category count when enabled',
+        () {
+      const config = PasswordConfig(includeSpecialStrict: true);
+
+      expect(config.includeSpecialStrict, isTrue);
+      expect(config.activeCategoriesCount, equals(5));
+      expect(config.totalPoolSize, equals(94)); // 26 + 26 + 10 + 16 + 16
+      expect(
+        config.isCategoryEnabled(PasswordCategory.specialStrict),
+        isTrue,
+      );
     });
 
     test('validates single active category cannot be disabled', () {
@@ -23,8 +38,10 @@ void main() {
       );
 
       expect(singleActiveConfig.activeCategoriesCount, equals(1));
-      expect(singleActiveConfig.canDisableCategory(PasswordCategory.uppercase), isFalse);
-      expect(singleActiveConfig.canDisableCategory(PasswordCategory.lowercase), isTrue);
+      expect(singleActiveConfig.canDisableCategory(PasswordCategory.uppercase),
+          isFalse);
+      expect(singleActiveConfig.canDisableCategory(PasswordCategory.lowercase),
+          isTrue);
     });
 
     test('allows disabling when multiple categories are active', () {
@@ -36,8 +53,12 @@ void main() {
       );
 
       expect(multipleActiveConfig.activeCategoriesCount, equals(2));
-      expect(multipleActiveConfig.canDisableCategory(PasswordCategory.uppercase), isTrue);
-      expect(multipleActiveConfig.canDisableCategory(PasswordCategory.lowercase), isTrue);
+      expect(
+          multipleActiveConfig.canDisableCategory(PasswordCategory.uppercase),
+          isTrue);
+      expect(
+          multipleActiveConfig.canDisableCategory(PasswordCategory.lowercase),
+          isTrue);
     });
   });
 }

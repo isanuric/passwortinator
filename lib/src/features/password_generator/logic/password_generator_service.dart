@@ -68,6 +68,13 @@ class PasswordGeneratorService {
       combinedPool.write(AppConstants.specialCharacters);
     }
 
+    if (config.includeSpecialStrict) {
+      guaranteedCharacters.add(
+        _getRandomChar(AppConstants.strictSpecialCharacters, random),
+      );
+      combinedPool.write(AppConstants.strictSpecialCharacters);
+    }
+
     final String poolString = combinedPool.toString();
     if (poolString.isEmpty) {
       return '';

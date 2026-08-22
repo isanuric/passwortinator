@@ -100,6 +100,14 @@ class OptionsCard extends ConsumerWidget {
             icon: Icons.star_border_rounded,
             onToggleCategory: notifier.toggleCategory,
           ),
+          const Divider(height: 1),
+          _buildOptionRow(
+            context: context,
+            config: config,
+            category: PasswordCategory.specialStrict,
+            icon: Icons.terminal_rounded,
+            onToggleCategory: notifier.toggleCategory,
+          ),
         ],
       ),
     );

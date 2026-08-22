@@ -12,13 +12,22 @@ void main() {
     });
 
     test('calculates correct entropy based on active pools', () {
-      // 1. All categories active: Pool = 26 + 26 + 10 + 32 = 94.
-      // E = 16 * log2(94) = 16 * (ln(94) / ln(2)) ≈ 104.873 bits
+      // 1. All default categories active (strict off): Pool = 26 + 26 + 10 + 16 = 78.
+      // E = 16 * log2(78) ≈ 100.57 bits
       const allActiveConfig = PasswordConfig(length: 16);
       final entropyAll = service.calculateEntropy(allActiveConfig);
-      expect(entropyAll, closeTo(104.87, 0.05));
+      expect(entropyAll, closeTo(100.57, 0.05));
 
-      // 2. Only lowercase active: Pool = 26.
+      // 2. All categories including strict active: Pool = 78 + 16 = 94.
+      // E = 16 * log2(94) ≈ 104.87 bits
+      const allStrictConfig = PasswordConfig(
+        length: 16,
+        includeSpecialStrict: true,
+      );
+      final entropyStrict = service.calculateEntropy(allStrictConfig);
+      expect(entropyStrict, closeTo(104.87, 0.05));
+
+      // 3. Only lowercase active: Pool = 26.
       // E = 8 * log2(26) ≈ 8 * 4.70044 = 37.60 bits (< 50 => Weak)
       const lowercaseOnlyConfig = PasswordConfig(
         length: 8,
@@ -30,7 +39,7 @@ void main() {
       final entropyLower = service.calculateEntropy(lowercaseOnlyConfig);
       expect(entropyLower, closeTo(37.60, 0.05));
 
-      // 3. Lowercase + Uppercase: Pool = 52.
+      // 4. Lowercase + Uppercase: Pool = 52.
       // E = 10 * log2(52) ≈ 10 * 5.70044 = 57.00 bits (50 <= E < 70 => Medium)
       const upperLowerConfig = PasswordConfig(
         length: 10,
@@ -58,12 +67,14 @@ void main() {
         includeLowercase: true,
         includeNumbers: true,
         includeSpecial: true,
+        includeSpecialStrict: true,
       );
 
       final upperRegex = RegExp(r'[A-Z]');
       final lowerRegex = RegExp(r'[a-z]');
       final numberRegex = RegExp(r'[0-9]');
       final specialSet = AppConstants.specialCharacters.split('').toSet();
+      final strictSet = AppConstants.strictSpecialCharacters.split('').toSet();
 
       for (int i = 0; i < 100; i++) {
         final password = service.generatePassword(config);
@@ -78,6 +89,11 @@ void main() {
           password.split('').any((c) => specialSet.contains(c)),
           isTrue,
           reason: 'Password must contain special characters',
+        );
+        expect(
+          password.split('').any((c) => strictSet.contains(c)),
+          isTrue,
+          reason: 'Password must contain strict special characters',
         );
       }
     });
@@ -107,7 +123,7 @@ void main() {
         set.add(service.generatePassword(config));
       }
 
-      // With 16 characters from 94 pool, all 50 should be unique
+      // With 16 characters from the 78-char pool, all 50 should be unique
       expect(set.length, equals(50));
     });
   });

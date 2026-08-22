@@ -62,6 +62,9 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
       case PasswordCategory.special:
         updatedConfig = state.config.copyWith(includeSpecial: isEnabled);
         break;
+      case PasswordCategory.specialStrict:
+        updatedConfig = state.config.copyWith(includeSpecialStrict: isEnabled);
+        break;
     }
 
     state = _computeState(updatedConfig);
