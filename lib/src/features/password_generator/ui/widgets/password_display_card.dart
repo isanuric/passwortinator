@@ -12,6 +12,10 @@ import 'strength_indicator.dart';
 class PasswordDisplayCard extends ConsumerWidget {
   const PasswordDisplayCard({super.key});
 
+  /// Fixed height of the password field. Chosen to comfortably fit the longest
+  /// allowed password (64 chars, smallest font) wrapping to 3 lines.
+  static const double _passwordFieldHeight = 72;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (password, strength, entropy) = ref.watch(
@@ -32,11 +36,15 @@ class PasswordDisplayCard extends ConsumerWidget {
               children: [
                 // Password field
                 AnimatedSwitcher(
+                  key: const Key('password-switcher'),
                   duration: const Duration(milliseconds: 220),
                   switchInCurve: Curves.easeOut,
                   switchOutCurve: Curves.easeIn,
                   child: Container(
                     key: ValueKey(password),
+                    // Fixed height: the field never grows or shrinks regardless
+                    // of how many lines the password wraps to.
+                    height: _passwordFieldHeight,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 10,

@@ -56,6 +56,20 @@ void main() {
       expect(displayedPassword().length, equals(initial.length));
     });
 
+    testWidgets('password field height stays fixed across regenerations',
+        (tester) async {
+      await tester.pumpWidget(buildApp());
+
+      double fieldHeight() =>
+          tester.getRect(find.byKey(const Key('password-switcher'))).height;
+      final initial = fieldHeight();
+
+      await tapVisible(tester, find.widgetWithText(FilledButton, 'Regenerate'));
+      await tester.pumpAndSettle();
+
+      expect(fieldHeight(), equals(initial));
+    });
+
     testWidgets('copy button copies to clipboard and shows snack bar',
         (tester) async {
       final calls = <MethodCall>[];
