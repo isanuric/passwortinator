@@ -21,7 +21,12 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
     return _computeState(initialConfig);
   }
 
-  /// Updates the desired password length and regenerates the password.
+  /// Live-updates the length preview while the user drags the slider.
+  ///
+  /// Only the length, entropy and strength are recalculated (cheap math).
+  /// The password itself is intentionally NOT regenerated here to avoid
+  /// repeatedly invoking the costly system CSPRNG with every slider tick.
+  /// It is regenerated once via [regenerate] when the drag ends.
   void setLength(int newLength) {
     final clampedLength = newLength.clamp(
       AppConstants.minPasswordLength,
@@ -30,7 +35,7 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
     if (state.config.length == clampedLength) return;
 
     final updatedConfig = state.config.copyWith(length: clampedLength);
-    state = _computeState(updatedConfig);
+    state = _computeState(updatedConfig, generatePassword: false);
   }
 
   /// Toggles a character category on or off.
@@ -61,16 +66,26 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
     state = _computeState(updatedConfig);
   }
 
-  /// Manually triggers generation of a new password with the existing configuration.
+  /// Manually triggers generation of a new password with the existing
+  /// configuration (uses the current config, including the latest length).
   void regenerate() {
     state = _computeState(state.config);
   }
 
   /// Helper to compute full state from a given config.
-  PasswordGeneratorState _computeState(PasswordConfig config) {
+  ///
+  /// When [generatePassword] is false (slider drag preview),
+  /// [PasswordGeneratorState.password] is kept from the previous state and
+  /// only the cheap metadata (entropy + strength) is recomputed.
+  PasswordGeneratorState _computeState(
+    PasswordConfig config, {
+    bool generatePassword = true,
+  }) {
     final entropy = _service.calculateEntropy(config);
     final strength = PasswordStrength.fromEntropy(entropy);
-    final password = _service.generatePassword(config);
+    final password = generatePassword
+        ? _service.generatePassword(config)
+        : state.password;
 
     return PasswordGeneratorState(
       config: config,

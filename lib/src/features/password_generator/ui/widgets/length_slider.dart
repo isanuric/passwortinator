@@ -3,15 +3,21 @@ import '../../../../core/constants/app_constants.dart';
 import '../../models/password_strength.dart';
 
 /// Card widget containing the password length slider control.
+///
+/// Invokes [onLengthChanged] continuously while dragging (live preview of
+/// length/entropy/strength) and [onChangeEnd] once when the drag ends so the
+/// caller can defer the expensive password generation.
 class LengthSlider extends StatelessWidget {
   const LengthSlider({
     super.key,
     required this.length,
     required this.onLengthChanged,
+    required this.onChangeEnd,
   });
 
   final int length;
   final ValueChanged<int> onLengthChanged;
+  final VoidCallback onChangeEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +76,7 @@ class LengthSlider extends StatelessWidget {
               divisions: AppConstants.maxPasswordLength - AppConstants.minPasswordLength,
               label: length.toString(),
               onChanged: (value) => onLengthChanged(value.round()),
+              onChangeEnd: (_) => onChangeEnd(),
             ),
 
             // Min and Max strength hints (weak -> strong)

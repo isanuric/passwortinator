@@ -24,14 +24,39 @@ void main() {
       expect(state.entropy, greaterThan(70.0)); // All categories active with length 16 is strong
     });
 
-    test('setLength updates password length and recalculates entropy', () {
+    test('setLength updates length and entropy live without regenerating password', () {
       final notifier = container.read(passwordGeneratorProvider.notifier);
+      final initialPassword = container.read(passwordGeneratorProvider).password;
+      final initialEntropy = container.read(passwordGeneratorProvider).entropy;
 
       notifier.setLength(24);
-      final state = container.read(passwordGeneratorProvider);
+      var state = container.read(passwordGeneratorProvider);
 
+      // Length and entropy reflect the new value immediately...
       expect(state.config.length, equals(24));
+      expect(state.entropy, greaterThan(initialEntropy));
+      // ...but the password is NOT regenerated on every slider tick.
+      expect(state.password, equals(initialPassword));
+      expect(state.password.length, equals(initialPassword.length));
+
+      // After the drag ends (onChangeEnd), the password is regenerated.
+      notifier.regenerate();
+      state = container.read(passwordGeneratorProvider);
+
       expect(state.password.length, equals(24));
+      expect(state.password, isNot(equals(initialPassword)));
+    });
+
+    test('setLength clamps to min and max allowed length', () {
+      final notifier = container.read(passwordGeneratorProvider.notifier);
+
+      notifier.setLength(1);
+      expect(container.read(passwordGeneratorProvider).config.length,
+          equals(AppConstants.minPasswordLength));
+
+      notifier.setLength(200);
+      expect(container.read(passwordGeneratorProvider).config.length,
+          equals(AppConstants.maxPasswordLength));
     });
 
     test('toggleCategory prevents disabling the last active category', () {

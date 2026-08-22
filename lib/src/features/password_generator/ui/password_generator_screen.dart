@@ -48,9 +48,12 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
 
                   // 2. Password Length Slider
+                  // Live: length/entropy/strength update while dragging.
+                  // Password is regenerated once when the drag ends.
                   LengthSlider(
                     length: state.config.length,
                     onLengthChanged: notifier.setLength,
+                    onChangeEnd: notifier.regenerate,
                   ),
                   const SizedBox(height: 16),
 
