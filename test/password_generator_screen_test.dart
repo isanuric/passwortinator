@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:passwortinator/src/app.dart';
+import 'package:passwortinator/src/core/constants/app_constants.dart';
 import 'package:passwortinator/src/features/password_generator/ui/password_generator_screen.dart';
 import 'package:passwortinator/src/features/password_generator/ui/widgets/action_buttons.dart';
 import 'package:passwortinator/src/features/password_generator/ui/widgets/length_slider.dart';
@@ -35,7 +36,13 @@ void main() {
       expect(find.text('Passwortinator'), findsOneWidget);
       expect(find.byType(SelectableText), findsOneWidget);
       expect(find.byType(Slider), findsOneWidget);
-      expect(find.byType(FilterChip), findsNWidgets(6));
+      expect(find.byType(FilterChip), findsNWidgets(4));
+      expect(find.byType(Switch), findsNWidgets(2));
+      expect(
+        find.text(AppConstants.strictSpecialCharacters),
+        findsOneWidget,
+      );
+      expect(find.text('0O 1l'), findsOneWidget);
       expect(find.text('Regenerate'), findsOneWidget);
       expect(find.byTooltip('Copy'), findsOneWidget);
       expect(characterCountFinder(), findsOneWidget);
@@ -176,11 +183,11 @@ void main() {
     testWidgets('last active category cannot be disabled', (tester) async {
       await tester.pumpWidget(buildApp());
 
-      expect(find.byType(FilterChip), findsNWidgets(6));
+      expect(find.byType(FilterChip), findsNWidgets(4));
 
       // Disable lowercase (1), numbers (2) and special (3) one by one. Strict
-      // (4) is already off and "0O 1l" (5) is a standalone toggle, so only
-      // the first (uppercase) category chip stays active.
+      // and "0O 1l" are toggles, not category chips, so only the first
+      // (uppercase) category chip stays active.
       for (var i = 1; i < 4; i++) {
         await tester.ensureVisible(find.byType(FilterChip).at(i));
         await tester.pumpAndSettle();
@@ -263,13 +270,13 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      // Content fills the height: the action button is pinned to the bottom
+      // Content fills the height: the last action row is pinned to the bottom
       // edge and not floating in the middle with empty space below it.
       final appBarBox = tester.getRect(find.byType(AppBar));
-      final regenerateBox = tester.getRect(find.text('Regenerate'));
+      final actionRowBox = tester.getRect(find.byType(ActionButtons));
 
-      expect(regenerateBox.bottom, lessThanOrEqualTo(640));
-      expect(regenerateBox.bottom, greaterThan(600));
+      expect(actionRowBox.bottom, lessThanOrEqualTo(640));
+      expect(actionRowBox.bottom, greaterThan(600));
 
       // The password card starts near the top of the body.
       final passwordBox = tester.getRect(find.byType(SelectableText));

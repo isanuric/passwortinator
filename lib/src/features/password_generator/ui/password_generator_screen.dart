@@ -48,14 +48,14 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                     return SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14.0,
-                        vertical: 14.0,
+                        vertical: 10.0,
                       ),
                       // Force the column to at least fill the viewport height
                       // (minus the scroll padding), so the Spacer below pushes
                       // the action button to the bottom edge.
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: viewportConstraints.maxHeight - 28,
+                          minHeight: viewportConstraints.maxHeight - 20,
                         ),
                         child: const IntrinsicHeight(
                           child: Column(
@@ -63,17 +63,17 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                             children: [
                               // 1. Output – password with inline copy & strength
                               PasswordDisplayCard(),
-                              SizedBox(height: 14),
+                              SizedBox(height: 10),
 
                               // 2. Controls – length slider + character chips
                               LengthSlider(),
-                              SizedBox(height: 14),
+                              SizedBox(height: 10),
                               OptionsCard(),
 
                               // Flexible gap: absorbs all leftover space so the
                               // action button sits flush at the bottom edge.
                               Spacer(),
-                              SizedBox(height: 14),
+                              SizedBox(height: 10),
 
                               // 3. Primary action – pinned to the bottom
                               ActionButtons(),
