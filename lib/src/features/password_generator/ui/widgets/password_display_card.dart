@@ -7,22 +7,14 @@ import '../clipboard_utils.dart';
 import 'strength_indicator.dart';
 
 /// Hero card displaying the generated password with premium styling,
-/// mask toggle, regenerate and copy actions, and the strength indicator.
+/// regenerate and copy actions, and the strength indicator.
 ///
 /// Watches only `password`, `strength` and `entropy`.
-class PasswordDisplayCard extends ConsumerStatefulWidget {
+class PasswordDisplayCard extends ConsumerWidget {
   const PasswordDisplayCard({super.key});
 
   @override
-  ConsumerState<PasswordDisplayCard> createState() =>
-      _PasswordDisplayCardState();
-}
-
-class _PasswordDisplayCardState extends ConsumerState<PasswordDisplayCard> {
-  bool _masked = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final (password, strength, entropy) = ref.watch(
       passwordGeneratorProvider.select(
         (s) => (s.password, s.strength, s.entropy),
@@ -32,7 +24,6 @@ class _PasswordDisplayCardState extends ConsumerState<PasswordDisplayCard> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final displayText = _masked ? '•' * password.length : password;
 
     return SurfaceCard(
       glow: true,
@@ -60,14 +51,6 @@ class _PasswordDisplayCardState extends ConsumerState<PasswordDisplayCard> {
               Row(
                 children: [
                   _IconAction(
-                    icon: _masked
-                        ? Icons.visibility_off_rounded
-                        : Icons.visibility_rounded,
-                    tooltip: _masked ? 'Show password' : 'Hide password',
-                    onPressed: () => setState(() => _masked = !_masked),
-                  ),
-                  const SizedBox(width: 8),
-                  _IconAction(
                     icon: Icons.refresh_rounded,
                     tooltip: 'Regenerate',
                     onPressed: notifier.regenerate,
@@ -91,7 +74,7 @@ class _PasswordDisplayCardState extends ConsumerState<PasswordDisplayCard> {
             switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
             child: Container(
-              key: ValueKey(displayText),
+              key: ValueKey(password),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 22),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -113,7 +96,7 @@ class _PasswordDisplayCardState extends ConsumerState<PasswordDisplayCard> {
                 ),
               ),
               child: SelectableText(
-                displayText,
+                password,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'monospace',
