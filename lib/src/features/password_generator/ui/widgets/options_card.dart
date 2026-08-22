@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/surface_card.dart';
 import '../../logic/password_generator_provider.dart';
 import '../../models/password_config.dart';
 
-/// Premium card allowing users to configure which character sets to include.
+/// Minimal character set selector: a wrap of compact chips. No title, no
+/// subtitle – the chips are self-explanatory (A-Z, a-z, 0-9, symbols, strict).
 ///
 /// Watches only the configuration – it is not rebuilt when the password or the
 /// length slider changes.
@@ -18,165 +18,90 @@ class OptionsCard extends ConsumerWidget {
       passwordGeneratorProvider.select((s) => s.config),
     );
     final notifier = ref.read(passwordGeneratorProvider.notifier);
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
 
     return SurfaceCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
         children: [
-          // Title Header
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  gradient: AppTheme.accentGradient,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.secondary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.tune_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Character options',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'At least one category must remain active.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: cs.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-
-          // Options Rows
-          _buildOptionRow(
+          _buildChip(
             context: context,
             config: config,
             category: PasswordCategory.uppercase,
-            icon: Icons.text_fields_rounded,
-            onToggleCategory: notifier.toggleCategory,
+            label: 'A-Z',
+            notifier: notifier,
           ),
-          const Divider(height: 1),
-          _buildOptionRow(
+          _buildChip(
             context: context,
             config: config,
             category: PasswordCategory.lowercase,
-            icon: Icons.format_size_rounded,
-            onToggleCategory: notifier.toggleCategory,
+            label: 'a-z',
+            notifier: notifier,
           ),
-          const Divider(height: 1),
-          _buildOptionRow(
+          _buildChip(
             context: context,
             config: config,
             category: PasswordCategory.numbers,
-            icon: Icons.pin_rounded,
-            onToggleCategory: notifier.toggleCategory,
+            label: '0-9',
+            notifier: notifier,
           ),
-          const Divider(height: 1),
-          _buildOptionRow(
+          _buildChip(
             context: context,
             config: config,
             category: PasswordCategory.special,
-            icon: Icons.star_border_rounded,
-            onToggleCategory: notifier.toggleCategory,
+            label: '!@#',
+            notifier: notifier,
           ),
-          const Divider(height: 1),
-          _buildOptionRow(
+          _buildChip(
             context: context,
             config: config,
             category: PasswordCategory.specialStrict,
-            icon: Icons.terminal_rounded,
-            onToggleCategory: notifier.toggleCategory,
+            label: 'Strict',
+            notifier: notifier,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildOptionRow({
+  Widget _buildChip({
     required BuildContext context,
     required PasswordConfig config,
     required PasswordCategory category,
-    required IconData icon,
-    required void Function(PasswordCategory category, bool isEnabled)
-        onToggleCategory,
+    required String label,
+    required PasswordGeneratorNotifier notifier,
   }) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs = Theme.of(context).colorScheme;
     final isEnabled = config.isCategoryEnabled(category);
     final canToggle = config.canDisableCategory(category);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: SwitchListTile.adaptive(
-        contentPadding: EdgeInsets.zero,
-        dense: true,
-        secondary: Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            gradient: isEnabled
-                ? AppTheme.primaryGradient
-                : LinearGradient(
-                    colors: [
-                      cs.surfaceContainerHighest.withValues(alpha: 0.8),
-                      cs.surfaceContainerHighest.withValues(alpha: 0.4),
-                    ],
-                  ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            icon,
-            size: 17,
-            color: isEnabled
-                ? Colors.white
-                : cs.onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-        ),
-        title: Text(
-          category.title,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: !canToggle && isEnabled
-                ? cs.onSurface
-                : (isEnabled ? cs.onSurface : cs.onSurfaceVariant),
-          ),
-        ),
-        subtitle: Text(
-          '${category.subtitle} · ${category.example}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: cs.onSurfaceVariant.withValues(alpha: 0.85),
-          ),
-        ),
-        activeThumbColor: cs.surfaceContainerLowest,
-        activeTrackColor: cs.primary,
-        inactiveThumbColor: cs.surfaceContainerLowest,
-        value: isEnabled,
-        // Disable switch if it is the last active option and currently enabled
-        onChanged: (!canToggle && isEnabled)
-            ? null
-            : (value) => onToggleCategory(category, value),
+    return FilterChip(
+      label: Text(label),
+      selected: isEnabled,
+      showCheckmark: false,
+      // Disable the chip if it is the last active option and currently enabled
+      onSelected: (!canToggle && isEnabled)
+          ? null
+          : (value) => notifier.toggleCategory(category, value),
+      visualDensity: VisualDensity.compact,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      labelStyle: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: isEnabled ? cs.primary : cs.onSurfaceVariant,
       ),
+      selectedColor: cs.primaryContainer.withValues(alpha: 0.6),
+      backgroundColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+      side: BorderSide(
+        color: isEnabled
+            ? cs.primary.withValues(alpha: 0.7)
+            : cs.outlineVariant,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     );
   }
 }

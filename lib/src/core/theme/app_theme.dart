@@ -46,14 +46,13 @@ class AppTheme {
       scaffoldBackgroundColor: scheme.surface,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        centerTitle: false,
+        centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
-        toolbarHeight: 48,
         backgroundColor: Colors.transparent,
         foregroundColor: scheme.onSurface,
         titleTextStyle: const TextStyle(
-          fontSize: 18,
+          fontSize: 19,
           fontWeight: FontWeight.w800,
           letterSpacing: -0.4,
         ),

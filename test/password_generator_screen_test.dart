@@ -12,12 +12,12 @@ import 'package:passwortinator/src/features/password_generator/ui/widgets/passwo
 void main() {
   Widget buildApp() => const ProviderScope(child: PasswordGeneratorApp());
 
-  /// Finds the length pill text, e.g. '16 characters' (not 'Special characters').
+  /// Finds the length pill text, e.g. '16' (pure number, not 'Bit').
   Finder characterCountFinder() => find.byWidgetPredicate(
         (widget) =>
             widget is Text &&
             widget.data != null &&
-            RegExp(r'^\d+ characters$').hasMatch(widget.data!),
+            RegExp(r'^\d+$').hasMatch(widget.data!),
       );
 
   /// Scrolls [finder] into view (if needed) and taps it.
@@ -33,13 +33,13 @@ void main() {
       await tester.pumpWidget(buildApp());
 
       expect(find.text('Passwortinator'), findsOneWidget);
-      expect(find.text('Generated password'), findsOneWidget);
-      expect(find.text('Password length'), findsOneWidget);
-      expect(find.text('Character options'), findsOneWidget);
+      expect(find.byType(SelectableText), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
+      expect(find.byType(FilterChip), findsNWidgets(5));
       expect(find.text('Regenerate'), findsOneWidget);
-      expect(find.text('Copy password'), findsOneWidget);
+      expect(find.byTooltip('Copy'), findsOneWidget);
       expect(characterCountFinder(), findsOneWidget);
-      expect(find.textContaining('Bit Entropie'), findsOneWidget);
+      expect(find.textContaining('Bit'), findsOneWidget);
     });
 
     testWidgets('regenerate button creates a new password', (tester) async {
@@ -75,10 +75,7 @@ void main() {
 
       await tester.pumpWidget(buildApp());
 
-      await tapVisible(
-        tester,
-        find.widgetWithText(OutlinedButton, 'Copy password'),
-      );
+      await tapVisible(tester, find.byTooltip('Copy'));
       await tester.pump();
 
       expect(find.text('Password copied!'), findsOneWidget);
@@ -116,22 +113,23 @@ void main() {
     testWidgets('last active category cannot be disabled', (tester) async {
       await tester.pumpWidget(buildApp());
 
-      expect(find.byType(SwitchListTile), findsNWidgets(5));
+      expect(find.byType(FilterChip), findsNWidgets(5));
 
-      // Disable the last three categories one by one
+      // Disable lowercase, numbers and special (Strict is already off)
+      // one by one, leaving only the first (uppercase) chip active.
       for (var i = 1; i < 4; i++) {
-        await tester.ensureVisible(find.byType(SwitchListTile).at(i));
+        await tester.ensureVisible(find.byType(FilterChip).at(i));
         await tester.pumpAndSettle();
-        await tester.tap(find.byType(SwitchListTile).at(i));
+        await tester.tap(find.byType(FilterChip).at(i));
         await tester.pumpAndSettle();
       }
 
-      // The only remaining (first) switch must be disabled
-      final firstTile = tester.widget<SwitchListTile>(
-        find.byType(SwitchListTile).at(0),
+      // The only remaining (first) chip must be locked on
+      final firstChip = tester.widget<FilterChip>(
+        find.byType(FilterChip).at(0),
       );
-      expect(firstTile.value, isTrue);
-      expect(firstTile.onChanged, isNull);
+      expect(firstChip.selected, isTrue);
+      expect(firstChip.onSelected, isNull);
     });
 
     testWidgets('strength indicator exposes semantics label', (tester) async {
@@ -156,15 +154,15 @@ void main() {
       await tester.pumpWidget(buildApp());
 
       // Disable uppercase, numbers and special characters -> only lowercase
-      await tester.ensureVisible(find.byType(SwitchListTile).at(0));
+      await tester.ensureVisible(find.byType(FilterChip).at(0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(SwitchListTile).at(0));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byType(SwitchListTile).at(2));
+      await tester.tap(find.byType(FilterChip).at(0));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(SwitchListTile).at(3));
+      await tester.tap(find.byType(FilterChip).at(2));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(FilterChip).at(3));
       await tester.pumpAndSettle();
 
       // Drag slider far left -> length 8 (weak)
@@ -190,6 +188,33 @@ void main() {
       expect(find.byType(LengthSlider), findsOneWidget);
       expect(find.byType(OptionsCard), findsOneWidget);
       expect(find.byType(ActionButtons), findsOneWidget);
+    });
+
+    testWidgets('distributes content across the full phone screen', (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      // Content fills the height: the action button is pinned to the bottom
+      // edge and not floating in the middle with empty space below it.
+      final appBarBox = tester.getRect(find.byType(AppBar));
+      final regenerateBox = tester.getRect(find.text('Regenerate'));
+
+      expect(regenerateBox.bottom, lessThanOrEqualTo(640));
+      expect(regenerateBox.bottom, greaterThan(600));
+
+      // The password card starts near the top of the body.
+      final passwordBox = tester.getRect(find.byType(SelectableText));
+      expect(passwordBox.top, greaterThanOrEqualTo(appBarBox.bottom));
+      expect(
+        passwordBox.top - appBarBox.bottom,
+        lessThan(60),
+        reason: 'Password should start near the top without empty space',
+      );
     });
   });
 }

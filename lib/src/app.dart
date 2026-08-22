@@ -11,9 +11,11 @@ class PasswordGeneratorApp extends StatelessWidget {
     return MaterialApp(
       title: 'Passwortinator',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      // Always use the dark brand theme so the premium violet gradient renders
+      // identically on every device, regardless of the system brightness.
+      theme: AppTheme.darkTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: const PasswordGeneratorScreen(),
     );
   }

@@ -9,9 +9,10 @@ import 'widgets/password_display_card.dart';
 
 /// Main screen of the Password Generator application.
 ///
-/// Thin scaffold that paints the ambient gradient and lays out the premium
-/// content cards. Each card is a `ConsumerWidget` watching only the state it
-/// needs via `select`, so slider ticks rebuild only the relevant pieces.
+/// Thin scaffold that paints the ambient gradient and lays out the content
+/// so it fills the whole viewport: the password and controls form a compact
+/// cluster at the top, and the primary action is pinned to the bottom edge.
+/// On very short screens the column scrolls instead of overflowing.
 class PasswordGeneratorScreen extends ConsumerWidget {
   const PasswordGeneratorScreen({super.key});
 
@@ -27,7 +28,7 @@ class PasswordGeneratorScreen extends ConsumerWidget {
           child: const Text(
             'Passwortinator',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 19,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.4,
               color: Colors.white,
@@ -42,31 +43,46 @@ class PasswordGeneratorScreen extends ConsumerWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 600),
-                child: const SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 10.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // 1. Password Display with strength indicator & actions
-                      PasswordDisplayCard(),
-                      SizedBox(height: 12),
+                child: LayoutBuilder(
+                  builder: (context, viewportConstraints) {
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14.0,
+                        vertical: 14.0,
+                      ),
+                      // Force the column to at least fill the viewport height
+                      // (minus the scroll padding), so the Spacer below pushes
+                      // the action button to the bottom edge.
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: viewportConstraints.maxHeight - 28,
+                        ),
+                        child: const IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // 1. Output – password with inline copy & strength
+                              PasswordDisplayCard(),
+                              SizedBox(height: 14),
 
-                      // 2. Password Length Slider
-                      LengthSlider(),
-                      SizedBox(height: 12),
+                              // 2. Controls – length slider + character chips
+                              LengthSlider(),
+                              SizedBox(height: 14),
+                              OptionsCard(),
 
-                      // 3. Character Options
-                      OptionsCard(),
-                      SizedBox(height: 16),
+                              // Flexible gap: absorbs all leftover space so the
+                              // action button sits flush at the bottom edge.
+                              Spacer(),
+                              SizedBox(height: 14),
 
-                      // 4. Action Buttons
-                      ActionButtons(),
-                      SizedBox(height: 16),
-                    ],
-                  ),
+                              // 3. Primary action – pinned to the bottom
+                              ActionButtons(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
