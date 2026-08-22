@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/password_strength.dart';
 
-/// Visual indicator for password entropy and calculated strength.
+/// Premium strength indicator: status pill, entropy chip and an animated
+/// segmented meter with a soft gradient glow.
 class StrengthIndicator extends StatelessWidget {
   const StrengthIndicator({
     super.key,
@@ -15,6 +16,7 @@ class StrengthIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Semantics(
       container: true,
@@ -22,63 +24,30 @@ class StrengthIndicator extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Strength status and entropy value row
+          // Status pill + entropy chip
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    _getStrengthIcon(strength),
-                    size: 18,
-                    color: strength.color,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Strength: ${strength.label}',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: strength.color,
-                    ),
-                  ),
-                ],
+              Flexible(
+                child: _statusPill(context, isDark: isDark),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: strength.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: strength.color.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  '${entropy.toStringAsFixed(1)} Bit Entropie',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: strength.color,
-                  ),
-                ),
-              ),
+              const SizedBox(width: 10),
+              _entropyChip(context),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
 
-          // Segmented Strength Bar
+          // Animated segmented strength bar
           Row(
             children: [
               _buildBarSegment(
                 context: context,
-                index: 0,
                 activeColor: strength.color,
                 isActive: true,
               ),
               const SizedBox(width: 6),
               _buildBarSegment(
                 context: context,
-                index: 1,
                 activeColor: strength.color,
                 isActive: strength == PasswordStrength.medium ||
                     strength == PasswordStrength.strong,
@@ -86,7 +55,6 @@ class StrengthIndicator extends StatelessWidget {
               const SizedBox(width: 6),
               _buildBarSegment(
                 context: context,
-                index: 2,
                 activeColor: strength.color,
                 isActive: strength == PasswordStrength.strong,
               ),
@@ -97,31 +65,87 @@ class StrengthIndicator extends StatelessWidget {
     );
   }
 
+  Widget _statusPill(BuildContext context, {required bool isDark}) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: strength.color.withValues(alpha: isDark ? 0.16 : 0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: strength.color.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(_getStrengthIcon(strength), size: 15, color: strength.color),
+          const SizedBox(width: 7),
+          Flexible(
+            child: Text(
+              'Strength: ${strength.label}',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: strength.color,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _entropyChip(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Text(
+        '${entropy.toStringAsFixed(1)} Bit Entropie',
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
   Widget _buildBarSegment({
     required BuildContext context,
-    required int index,
     required Color activeColor,
     required bool isActive,
   }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final inactiveColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.08);
-
     return Expanded(
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
         height: 8,
         decoration: BoxDecoration(
-          color: isActive ? activeColor : inactiveColor,
-          borderRadius: BorderRadius.circular(4),
+          color: isActive ? null : _inactiveColor(context),
+          borderRadius: BorderRadius.circular(6),
+          gradient: isActive
+              ? LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    activeColor,
+                    activeColor.withValues(alpha: 0.65),
+                  ],
+                )
+              : null,
           boxShadow: isActive
               ? [
                   BoxShadow(
                     color: activeColor.withValues(alpha: 0.35),
-                    blurRadius: 6,
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ]
@@ -129,6 +153,13 @@ class StrengthIndicator extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _inactiveColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
   }
 
   IconData _getStrengthIcon(PasswordStrength strength) {

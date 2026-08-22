@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/surface_card.dart';
 import '../../logic/password_generator_provider.dart';
 import '../../models/password_strength.dart';
 
-/// Card widget containing the password length slider control.
+/// Premium card containing the password length slider.
 ///
-/// Watches only the current length. While dragging, [PasswordGeneratorNotifier.setLength]
-/// updates length/entropy/strength live; the expensive password generation is
-/// deferred to [PasswordGeneratorNotifier.regenerate], fired on drag end.
+/// Watches only the current length. While dragging, the notifier updates
+/// length/entropy/strength live; the expensive password generation is deferred
+/// to [PasswordGeneratorNotifier.regenerate] fired on drag end.
 class LengthSlider extends ConsumerWidget {
   const LengthSlider({super.key});
 
@@ -19,88 +20,108 @@ class LengthSlider extends ConsumerWidget {
     );
     final notifier = ref.read(passwordGeneratorProvider.notifier);
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final cs = theme.colorScheme;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Title and length value pill
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
+    return SurfaceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Title and length value pill
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: cs.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
                       Icons.straighten_rounded,
                       size: 20,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Password length',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '$length characters',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w800,
+                      color: cs.onPrimaryContainer,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Material 3 Slider
-            Slider(
-              value: length.toDouble(),
-              min: AppConstants.minPasswordLength.toDouble(),
-              max: AppConstants.maxPasswordLength.toDouble(),
-              divisions: AppConstants.maxPasswordLength - AppConstants.minPasswordLength,
-              label: length.toString(),
-              onChanged: (value) => notifier.setLength(value.round()),
-              onChangeEnd: (_) => notifier.regenerate(),
-            ),
-
-            // Min and Max strength hints (weak -> strong)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                  const SizedBox(width: 10),
                   Text(
-                    PasswordStrength.weak.label,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: PasswordStrength.weak.color,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    PasswordStrength.strong.label,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: PasswordStrength.strong.color,
+                    'Password length',
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      cs.primary,
+                      cs.primary.withValues(alpha: 0.8),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: cs.primary.withValues(alpha: 0.3),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  '$length characters',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: cs.onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Material 3 Slider
+          Slider(
+            value: length.toDouble(),
+            min: AppConstants.minPasswordLength.toDouble(),
+            max: AppConstants.maxPasswordLength.toDouble(),
+            divisions:
+                AppConstants.maxPasswordLength - AppConstants.minPasswordLength,
+            label: length.toString(),
+            onChanged: (value) => notifier.setLength(value.round()),
+            onChangeEnd: (_) => notifier.regenerate(),
+          ),
+          const SizedBox(height: 4),
+
+          // Min and max strength hints (weak -> strong)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  PasswordStrength.weak.label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: PasswordStrength.weak.color,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  PasswordStrength.strong.label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: PasswordStrength.strong.color,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

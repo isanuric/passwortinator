@@ -6,7 +6,8 @@ import 'password_generator_service.dart';
 import 'password_generator_state.dart';
 
 /// Provider exposing the [PasswordGeneratorService] instance.
-final passwordGeneratorServiceProvider = Provider<PasswordGeneratorService>((ref) {
+final passwordGeneratorServiceProvider =
+    Provider<PasswordGeneratorService>((ref) {
   return const PasswordGeneratorService();
 });
 
@@ -83,9 +84,8 @@ class PasswordGeneratorNotifier extends Notifier<PasswordGeneratorState> {
   }) {
     final entropy = _service.calculateEntropy(config);
     final strength = PasswordStrength.fromEntropy(entropy);
-    final password = generatePassword
-        ? _service.generatePassword(config)
-        : state.password;
+    final password =
+        generatePassword ? _service.generatePassword(config) : state.password;
 
     return PasswordGeneratorState(
       config: config,

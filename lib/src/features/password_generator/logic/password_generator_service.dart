@@ -4,8 +4,7 @@ import '../models/password_config.dart';
 
 /// Cryptographically secure service for generating passwords and calculating entropy.
 class PasswordGeneratorService {
-  const PasswordGeneratorService({math.Random? random})
-      : _random = random;
+  const PasswordGeneratorService({math.Random? random}) : _random = random;
 
   final math.Random? _random;
 
@@ -74,7 +73,8 @@ class PasswordGeneratorService {
       return '';
     }
 
-    final List<String> resultCharacters = List<String>.from(guaranteedCharacters);
+    final List<String> resultCharacters =
+        List<String>.from(guaranteedCharacters);
 
     // 2. Fill the remaining length from the combined pool
     final int remainingLength = config.length - guaranteedCharacters.length;

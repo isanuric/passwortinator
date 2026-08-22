@@ -21,7 +21,8 @@ class AppConstants {
   static const String numberCharacters = '0123456789';
 
   /// Standard ASCII special characters (32 characters).
-  static const String specialCharacters = r'''!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~''';
+  static const String specialCharacters =
+      r'''!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~''';
 
   /// Character pool sizes for entropy calculation.
   static const int lowercasePoolSize = 26;
