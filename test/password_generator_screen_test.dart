@@ -77,7 +77,7 @@ void main() {
       expect(fieldHeight(), equals(initial));
     });
 
-    testWidgets('copy button copies to clipboard and shows snack bar',
+    testWidgets('copy button copies to clipboard and shows inline feedback',
         (tester) async {
       final calls = <MethodCall>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -99,13 +99,69 @@ void main() {
       await tapVisible(tester, find.byTooltip('Copy'));
       await tester.pump();
 
-      expect(find.text('Password copied!'), findsOneWidget);
       expect(
         calls.any((c) => c.method == 'Clipboard.setData'),
         isTrue,
       );
+      // Inline feedback: the copy icon briefly becomes a checkmark.
+      expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+      // No snack bar is shown, so it can never block the action buttons.
+      expect(find.byType(SnackBar), findsNothing);
+
+      // Feedback resets after 1.5 s.
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.check_rounded), findsNothing);
 
       // Let the auto-clear timer fire (default: 60 s) so no timer is pending.
+      await tester.pump(const Duration(seconds: 61));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('copy keeps working repeatedly after regenerating',
+        (tester) async {
+      final copied = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'Clipboard.setData') {
+            copied.add((call.arguments as Map)['text'] as String);
+          }
+          return null;
+        },
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      // Copy #1 via the full-width bottom button.
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Copy'));
+      await tester.pump();
+      expect(copied, hasLength(1));
+
+      // Regenerate a new password.
+      await tapVisible(
+        tester,
+        find.widgetWithText(FilledButton, 'Regenerate'),
+      );
+      await tester.pumpAndSettle();
+
+      // Copy #2 must work again – nothing blocks the button.
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Copy'));
+      await tester.pump();
+      expect(copied, hasLength(2));
+      expect(copied[0], isNot(equals(copied[1])));
+
+      // No snack bar is ever shown over the action buttons.
+      expect(find.byType(SnackBar), findsNothing);
+
+      // Let the auto-clear timer fire so no timer is pending.
       await tester.pump(const Duration(seconds: 61));
       await tester.pumpAndSettle();
     });
