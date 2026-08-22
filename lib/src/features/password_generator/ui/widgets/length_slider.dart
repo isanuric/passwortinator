@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../models/password_strength.dart';
 
 /// Card widget containing the password length slider control.
 class LengthSlider extends StatelessWidget {
@@ -36,7 +37,7 @@ class LengthSlider extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Passwortlänge',
+                      'Password length',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -50,7 +51,7 @@ class LengthSlider extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '$length Zeichen',
+                    '$length characters',
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w800,
@@ -71,22 +72,24 @@ class LengthSlider extends StatelessWidget {
               onChanged: (value) => onLengthChanged(value.round()),
             ),
 
-            // Min and Max range hints
+            // Min and Max strength hints (weak -> strong)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${AppConstants.minPasswordLength} Zeichen',
+                    PasswordStrength.weak.label,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: PasswordStrength.weak.color,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
-                    '${AppConstants.maxPasswordLength} Zeichen',
+                    PasswordStrength.strong.label,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: PasswordStrength.strong.color,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],

@@ -33,7 +33,7 @@ class StrengthIndicator extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Stärke: ${strength.label}',
+                  'Strength: ${strength.label}',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: strength.color,

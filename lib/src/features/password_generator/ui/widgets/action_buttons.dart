@@ -22,7 +22,7 @@ class ActionButtons extends StatelessWidget {
             Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
             SizedBox(width: 10),
             Text(
-              'Passwort kopiert!',
+              'Password copied!',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ],
@@ -42,7 +42,7 @@ class ActionButtons extends StatelessWidget {
         FilledButton.icon(
           onPressed: onRegenerate,
           icon: const Icon(Icons.autorenew_rounded, size: 22),
-          label: const Text('Neu generieren'),
+          label: const Text('Regenerate'),
         ),
         const SizedBox(height: 12),
 
@@ -50,7 +50,7 @@ class ActionButtons extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => _copyToClipboard(context),
           icon: const Icon(Icons.copy_rounded, size: 20),
-          label: const Text('Passwort kopieren'),
+          label: const Text('Copy password'),
         ),
       ],
     );

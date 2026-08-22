@@ -22,7 +22,7 @@ class PasswordGeneratorScreen extends ConsumerWidget {
           children: [
             Icon(Icons.shield_rounded, size: 24),
             SizedBox(width: 8),
-            Text('Passwortinator'),
+            Text('Passwordinator'),
           ],
         ),
       ),

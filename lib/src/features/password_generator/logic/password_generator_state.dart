@@ -21,7 +21,7 @@ class PasswordGeneratorState {
   /// The calculated entropy of the password in bits.
   final double entropy;
 
-  /// The mapped strength level (Schwach, Mittel, Stark).
+  /// The mapped strength level (Weak, Medium, Strong).
   final PasswordStrength strength;
 
   /// Creates a copy of this state with optional updated values.

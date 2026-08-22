@@ -1,6 +1,6 @@
 {
-  "name": "Passwortinator",
-  "short_name": "PasswortGen",
+  "name": "Passwordinator",
+  "short_name": "PasswordGen",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0F172A",

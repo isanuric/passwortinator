@@ -4,17 +4,17 @@ import '../../../core/constants/app_constants.dart';
 /// Represents the calculated strength level of a password based on entropy.
 enum PasswordStrength {
   weak(
-    label: 'Schwach',
+    label: 'Weak',
     color: Color(0xFFE53935), // Red
     fraction: 0.33,
   ),
   medium(
-    label: 'Mittel',
+    label: 'Medium',
     color: Color(0xFFFFB300), // Amber / Yellow
     fraction: 0.66,
   ),
   strong(
-    label: 'Stark',
+    label: 'Strong',
     color: Color(0xFF43A047), // Green
     fraction: 1.0,
   );
@@ -36,9 +36,9 @@ enum PasswordStrength {
 
   /// Maps an entropy value (in bits) to the corresponding [PasswordStrength].
   ///
-  /// - E < 50 Bit = Schwach
-  /// - 50 <= E < 70 Bit = Mittel
-  /// - E >= 70 Bit = Stark
+  /// - E < 50 Bit = Weak
+  /// - 50 <= E < 70 Bit = Medium
+  /// - E >= 70 Bit = Strong
   factory PasswordStrength.fromEntropy(double entropy) {
     if (entropy < AppConstants.weakThreshold) {
       return PasswordStrength.weak;

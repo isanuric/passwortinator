@@ -4,22 +4,22 @@ import '../../../core/constants/app_constants.dart';
 /// Available character categories for password generation.
 enum PasswordCategory {
   uppercase(
-    title: 'Großbuchstaben',
+    title: 'Uppercase letters',
     subtitle: 'A-Z',
     example: 'ABC...',
   ),
   lowercase(
-    title: 'Kleinbuchstaben',
+    title: 'Lowercase letters',
     subtitle: 'a-z',
     example: 'abc...',
   ),
   numbers(
-    title: 'Zahlen',
+    title: 'Numbers',
     subtitle: '0-9',
     example: '123...',
   ),
   special(
-    title: 'Sonderzeichen',
+    title: 'Special characters',
     subtitle: r'!@#$%^&*...',
     example: '!@#...',
   );
@@ -77,7 +77,7 @@ class PasswordConfig {
   /// - a-z: 26
   /// - A-Z: 26
   /// - 0-9: 10
-  /// - Sonderzeichen: 32
+  /// - Special characters: 32
   int get totalPoolSize {
     int poolSize = 0;
     if (includeUppercase) poolSize += AppConstants.uppercasePoolSize;

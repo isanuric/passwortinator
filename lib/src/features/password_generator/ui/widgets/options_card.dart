@@ -33,7 +33,7 @@ class OptionsCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Zeichen-Optionen',
+                  'Character options',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -42,7 +42,7 @@ class OptionsCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Mindestens eine Kategorie muss aktiv bleiben.',
+              'At least one category must remain active.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),

@@ -28,7 +28,7 @@ class PasswordDisplayCard extends StatelessWidget {
             Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
             SizedBox(width: 10),
             Text(
-              'Passwort kopiert!',
+              'Password copied!',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ],
@@ -64,7 +64,7 @@ class PasswordDisplayCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Generiertes Passwort',
+                      'Generated password',
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -76,14 +76,14 @@ class PasswordDisplayCard extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.refresh_rounded),
-                      tooltip: 'Neu generieren',
+                      tooltip: 'Regenerate',
                       iconSize: 22,
                       color: colorScheme.primary,
                       onPressed: onRegenerate,
                     ),
                     IconButton(
                       icon: const Icon(Icons.copy_rounded),
-                      tooltip: 'Kopieren',
+                      tooltip: 'Copy',
                       iconSize: 22,
                       color: colorScheme.primary,
                       onPressed: () => _copyToClipboard(context),
