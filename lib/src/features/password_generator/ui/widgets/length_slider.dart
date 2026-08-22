@@ -33,22 +33,22 @@ class LengthSlider extends ConsumerWidget {
               Row(
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 32,
+                    height: 32,
                     decoration: BoxDecoration(
                       color: cs.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       Icons.straighten_rounded,
-                      size: 20,
+                      size: 18,
                       color: cs.onPrimaryContainer,
                     ),
                   ),
                   const SizedBox(width: 10),
                   Text(
                     'Password length',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -56,7 +56,7 @@ class LengthSlider extends ConsumerWidget {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -64,12 +64,12 @@ class LengthSlider extends ConsumerWidget {
                       cs.primary.withValues(alpha: 0.8),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: cs.primary.withValues(alpha: 0.3),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -83,7 +83,7 @@ class LengthSlider extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 14),
 
           // Material 3 Slider
           Slider(
@@ -96,7 +96,7 @@ class LengthSlider extends ConsumerWidget {
             onChanged: (value) => notifier.setLength(value.round()),
             onChangeEnd: (_) => notifier.regenerate(),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
 
           // Min and max strength hints (weak -> strong)
           Padding(

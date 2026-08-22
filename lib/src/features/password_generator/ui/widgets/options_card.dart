@@ -22,7 +22,7 @@ class OptionsCard extends ConsumerWidget {
     final cs = theme.colorScheme;
 
     return SurfaceCard(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -30,42 +30,42 @@ class OptionsCard extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   gradient: AppTheme.accentGradient,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: cs.secondary.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
                 child: const Icon(
                   Icons.tune_rounded,
                   color: Colors.white,
-                  size: 20,
+                  size: 18,
                 ),
               ),
               const SizedBox(width: 10),
               Text(
                 'Character options',
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             'At least one category must remain active.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: cs.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           const Divider(height: 1),
 
           // Options Rows
@@ -127,12 +127,13 @@ class OptionsCard extends ConsumerWidget {
     final canToggle = config.canDisableCategory(category);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: SwitchListTile.adaptive(
         contentPadding: EdgeInsets.zero,
+        dense: true,
         secondary: Container(
-          width: 42,
-          height: 42,
+          width: 34,
+          height: 34,
           decoration: BoxDecoration(
             gradient: isEnabled
                 ? AppTheme.primaryGradient
@@ -142,11 +143,11 @@ class OptionsCard extends ConsumerWidget {
                       cs.surfaceContainerHighest.withValues(alpha: 0.4),
                     ],
                   ),
-            borderRadius: BorderRadius.circular(13),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             icon,
-            size: 20,
+            size: 17,
             color: isEnabled
                 ? Colors.white
                 : cs.onSurfaceVariant.withValues(alpha: 0.5),

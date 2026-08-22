@@ -10,7 +10,7 @@ class SurfaceCard extends StatelessWidget {
   const SurfaceCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(24),
+    this.padding = const EdgeInsets.all(16),
     this.glow = false,
   });
 
@@ -27,7 +27,7 @@ class SurfaceCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: cs.surfaceContainerLowest.withValues(alpha: isDark ? 0.68 : 1),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: cs.outlineVariant.withValues(alpha: isDark ? 0.5 : 0.6),
         ),
@@ -37,8 +37,8 @@ class SurfaceCard extends StatelessWidget {
                   color: cs.primary.withValues(
                     alpha: isDark ? 0.24 : 0.10,
                   ),
-                  blurRadius: 42,
-                  offset: const Offset(0, 20),
+                  blurRadius: 28,
+                  offset: const Offset(0, 12),
                 ),
               ]
             : [
@@ -46,15 +46,15 @@ class SurfaceCard extends StatelessWidget {
                   color: Colors.black.withValues(
                     alpha: isDark ? 0.35 : 0.06,
                   ),
-                  blurRadius: 28,
-                  offset: const Offset(0, 14),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
                 ),
               ],
       ),
       child: Material(
         type: MaterialType.transparency,
         clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(padding: padding, child: child),
       ),
     );

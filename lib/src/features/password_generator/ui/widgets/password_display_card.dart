@@ -37,7 +37,7 @@ class PasswordDisplayCard extends ConsumerWidget {
               Row(
                 children: [
                   _brandBadge(cs: cs),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Text(
                     'Generated password',
                     style: theme.textTheme.labelMedium?.copyWith(
@@ -55,7 +55,7 @@ class PasswordDisplayCard extends ConsumerWidget {
                     tooltip: 'Regenerate',
                     onPressed: notifier.regenerate,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   _IconAction(
                     icon: Icons.copy_rounded,
                     tooltip: 'Copy',
@@ -66,7 +66,7 @@ class PasswordDisplayCard extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
 
           // Password field
           AnimatedSwitcher(
@@ -75,7 +75,7 @@ class PasswordDisplayCard extends ConsumerWidget {
             switchOutCurve: Curves.easeIn,
             child: Container(
               key: ValueKey(password),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 22),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -90,7 +90,7 @@ class PasswordDisplayCard extends ConsumerWidget {
                           cs.surfaceContainerHighest.withValues(alpha: 0.25),
                         ],
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: cs.outlineVariant.withValues(alpha: 0.4),
                 ),
@@ -102,14 +102,14 @@ class PasswordDisplayCard extends ConsumerWidget {
                   fontFamily: 'monospace',
                   fontSize: _calculateFontSize(password.length),
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  letterSpacing: 1.1,
                   color: cs.onSurface,
                   height: 1.35,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
 
           // Strength indicator
           StrengthIndicator(strength: strength, entropy: entropy),
@@ -120,31 +120,31 @@ class PasswordDisplayCard extends ConsumerWidget {
 
   Widget _brandBadge({required ColorScheme cs}) {
     return Container(
-      width: 44,
-      height: 44,
+      width: 34,
+      height: 34,
       decoration: BoxDecoration(
         gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: cs.primary.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child:
-          const Icon(Icons.lock_person_rounded, color: Colors.white, size: 22),
+          const Icon(Icons.lock_person_rounded, color: Colors.white, size: 18),
     );
   }
 
   /// Dynamically adjusts font size based on password length.
   double _calculateFontSize(int length) {
-    if (length <= 12) return 24.0;
-    if (length <= 20) return 20.0;
-    if (length <= 32) return 17.0;
-    if (length <= 48) return 15.0;
-    return 13.5;
+    if (length <= 12) return 21.0;
+    if (length <= 20) return 18.0;
+    if (length <= 32) return 15.0;
+    if (length <= 48) return 13.5;
+    return 12.0;
   }
 }
 
@@ -164,17 +164,17 @@ class _IconAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: 42,
-      height: 42,
+      width: 34,
+      height: 34,
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: cs.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
       child: IconButton(
-        icon: Icon(icon, size: 19),
+        icon: Icon(icon, size: 17),
         color: cs.onSurfaceVariant,
         tooltip: tooltip,
         padding: EdgeInsets.zero,

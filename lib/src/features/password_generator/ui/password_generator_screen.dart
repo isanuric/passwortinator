@@ -27,7 +27,7 @@ class PasswordGeneratorScreen extends ConsumerWidget {
           child: const Text(
             'Passwortinator',
             style: TextStyle(
-              fontSize: 21,
+              fontSize: 18,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.4,
               color: Colors.white,
@@ -44,27 +44,27 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                 constraints: const BoxConstraints(maxWidth: 600),
                 child: const SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 16.0,
+                    horizontal: 14.0,
+                    vertical: 10.0,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // 1. Password Display with strength indicator & actions
                       PasswordDisplayCard(),
-                      SizedBox(height: 18),
+                      SizedBox(height: 12),
 
                       // 2. Password Length Slider
                       LengthSlider(),
-                      SizedBox(height: 18),
+                      SizedBox(height: 12),
 
                       // 3. Character Options
                       OptionsCard(),
-                      SizedBox(height: 24),
+                      SizedBox(height: 16),
 
                       // 4. Action Buttons
                       ActionButtons(),
-                      SizedBox(height: 24),
+                      SizedBox(height: 16),
                     ],
                   ),
                 ),

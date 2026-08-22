@@ -26,13 +26,13 @@ class ActionButtons extends ConsumerWidget {
         // Primary gradient regenerate button
         DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
             gradient: AppTheme.primaryGradient,
             boxShadow: [
               BoxShadow(
                 color: cs.primary.withValues(alpha: 0.35),
-                blurRadius: 26,
-                offset: const Offset(0, 12),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
@@ -45,19 +45,19 @@ class ActionButtons extends ConsumerWidget {
               shadowColor: Colors.transparent,
               disabledBackgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(14),
               ),
               textStyle: const TextStyle(
-                fontSize: 17,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.2,
               ),
             ),
-            icon: const Icon(Icons.autorenew_rounded, size: 22),
+            icon: const Icon(Icons.autorenew_rounded, size: 19),
             label: const Text('Regenerate'),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
 
         // Secondary copy button
         OutlinedButton.icon(
@@ -67,12 +67,12 @@ class ActionButtons extends ConsumerWidget {
             backgroundColor: cs.surfaceContainerLowest.withValues(alpha: 0.6),
             side: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.8)),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(14),
             ),
             textStyle:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
-          icon: const Icon(Icons.copy_rounded, size: 20),
+          icon: const Icon(Icons.copy_rounded, size: 18),
           label: const Text('Copy password'),
         ),
       ],

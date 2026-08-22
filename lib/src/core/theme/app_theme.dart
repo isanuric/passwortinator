@@ -49,10 +49,11 @@ class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
+        toolbarHeight: 48,
         backgroundColor: Colors.transparent,
         foregroundColor: scheme.onSurface,
         titleTextStyle: const TextStyle(
-          fontSize: 21,
+          fontSize: 18,
           fontWeight: FontWeight.w800,
           letterSpacing: -0.4,
         ),
@@ -63,22 +64,22 @@ class AppTheme {
         color: scheme.surfaceContainerLowest,
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
+          minimumSize: const Size.fromHeight(48),
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: const TextStyle(
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.2,
           ),
@@ -86,13 +87,13 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
+          minimumSize: const Size.fromHeight(48),
           foregroundColor: scheme.primary,
           side: BorderSide(color: scheme.outlineVariant),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
@@ -102,22 +103,22 @@ class AppTheme {
           ),
           foregroundColor: scheme.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
       sliderTheme: SliderThemeData(
-        trackHeight: 6,
+        trackHeight: 4,
         activeTrackColor: scheme.primary,
         inactiveTrackColor: scheme.primaryContainer.withValues(alpha: 0.45),
         thumbColor: Colors.white,
         disabledThumbColor: Colors.white,
         overlayColor: scheme.primary.withValues(alpha: 0.16),
-        overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
         thumbShape: _BorderedSliderThumbShape(
-          enabledThumbRadius: 12,
-          elevation: 4,
-          pressedElevation: 8,
+          enabledThumbRadius: 10,
+          elevation: 3,
+          pressedElevation: 6,
           borderColor: scheme.primary,
         ),
       ),
@@ -198,13 +199,13 @@ class AppTheme {
 /// background, at any slider position.
 class _BorderedSliderThumbShape extends RoundSliderThumbShape {
   const _BorderedSliderThumbShape({
-    super.enabledThumbRadius = 12,
-    super.elevation = 4,
-    super.pressedElevation = 8,
+    super.enabledThumbRadius = 10,
+    super.elevation = 3,
+    super.pressedElevation = 6,
     required this.borderColor,
   });
 
-  static const double _borderWidth = 2.5;
+  static const double _borderWidth = 2.0;
 
   final Color borderColor;
 
