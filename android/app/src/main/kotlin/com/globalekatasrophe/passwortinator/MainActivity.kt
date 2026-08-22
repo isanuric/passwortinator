@@ -1,4 +1,4 @@
-package com.globalekatastrophe.passwortinator
+package com.globalekatasrophe.passwortinator
 
 import io.flutter.embedding.android.FlutterActivity
 
