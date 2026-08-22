@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:passwortinator/src/features/password_generator/models/password_config.dart';
+import 'package:passwordinator/src/features/password_generator/models/password_config.dart';
 
 void main() {
   group('PasswordConfig', () {

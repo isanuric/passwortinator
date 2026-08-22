@@ -1,4 +1,4 @@
-# Passwortinator
+# Passwordinator
 
 A modern, cryptographically secure password generator built with Flutter, Material 3, and Riverpod.
 

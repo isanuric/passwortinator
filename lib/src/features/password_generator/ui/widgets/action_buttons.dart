@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../clipboard_utils.dart';
 
 /// Primary action buttons for regenerating and copying the password.
 class ActionButtons extends StatelessWidget {
@@ -11,27 +11,6 @@ class ActionButtons extends StatelessWidget {
 
   final String password;
   final VoidCallback onRegenerate;
-
-  void _copyToClipboard(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: password));
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
-            SizedBox(width: 10),
-            Text(
-              'Password copied!',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        duration: Duration(seconds: 2),
-        backgroundColor: Color(0xFF1E293B),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +27,7 @@ class ActionButtons extends StatelessWidget {
 
         // Secondary copy button
         OutlinedButton.icon(
-          onPressed: () => _copyToClipboard(context),
+          onPressed: () => ClipboardUtils.copyWithFeedback(context, password),
           icon: const Icon(Icons.copy_rounded, size: 20),
           label: const Text('Copy password'),
         ),

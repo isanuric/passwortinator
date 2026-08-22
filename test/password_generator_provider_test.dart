@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:passwortinator/src/core/constants/app_constants.dart';
-import 'package:passwortinator/src/features/password_generator/logic/password_generator_provider.dart';
-import 'package:passwortinator/src/features/password_generator/models/password_config.dart';
+import 'package:passwordinator/src/core/constants/app_constants.dart';
+import 'package:passwordinator/src/features/password_generator/logic/password_generator_provider.dart';
+import 'package:passwordinator/src/features/password_generator/models/password_config.dart';
 
 void main() {
   group('PasswordGeneratorNotifier', () {

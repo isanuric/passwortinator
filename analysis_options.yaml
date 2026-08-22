@@ -11,8 +11,12 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    directives_ordering: true
     prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
     prefer_const_declarations: true
     prefer_final_locals: true
-    avoid_unnecessary_containers: true
+    sort_constructors_first: true
     use_key_in_widget_constructors: true

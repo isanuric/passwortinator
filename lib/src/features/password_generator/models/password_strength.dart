@@ -25,15 +25,6 @@ enum PasswordStrength {
     required this.fraction,
   });
 
-  /// Display text label for the strength level.
-  final String label;
-
-  /// Semantic theme color for visual indication.
-  final Color color;
-
-  /// Normalized progress bar fraction (0.0 - 1.0).
-  final double fraction;
-
   /// Maps an entropy value (in bits) to the corresponding [PasswordStrength].
   ///
   /// - E < 50 Bit = Weak
@@ -48,4 +39,13 @@ enum PasswordStrength {
       return PasswordStrength.strong;
     }
   }
+
+  /// Display text label for the strength level.
+  final String label;
+
+  /// Semantic theme color for visual indication.
+  final Color color;
+
+  /// Normalized progress bar fraction (0.0 - 1.0).
+  final double fraction;
 }

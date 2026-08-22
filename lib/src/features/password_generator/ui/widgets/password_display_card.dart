@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../models/password_strength.dart';
+import '../clipboard_utils.dart';
 import 'strength_indicator.dart';
 
 /// Card widget displaying the generated password with copy action and strength indicator.
@@ -17,27 +17,6 @@ class PasswordDisplayCard extends StatelessWidget {
   final PasswordStrength strength;
   final double entropy;
   final VoidCallback onRegenerate;
-
-  void _copyToClipboard(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: password));
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
-            SizedBox(width: 10),
-            Text(
-              'Password copied!',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        duration: Duration(seconds: 2),
-        backgroundColor: Color(0xFF1E293B),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +65,8 @@ class PasswordDisplayCard extends StatelessWidget {
                       tooltip: 'Copy',
                       iconSize: 22,
                       color: colorScheme.primary,
-                      onPressed: () => _copyToClipboard(context),
+                      onPressed: () =>
+                          ClipboardUtils.copyWithFeedback(context, password),
                     ),
                   ],
                 ),

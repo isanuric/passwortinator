@@ -1,4 +1,4 @@
-name: passwortinator
+name: passwordinator
 description: "A modern, cross-platform password generator built with Flutter and Riverpod."
 publish_to: 'none'
 version: 1.0.0+1
