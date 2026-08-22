@@ -52,39 +52,11 @@ class PasswordGeneratorService {
     final StringBuffer combinedPool = StringBuffer();
 
     // 1. Guarantee logic: Draw exactly one random character per active category
-    if (config.includeUppercase) {
-      guaranteedCharacters.add(
-        _getRandomChar(config.getPool(PasswordCategory.uppercase), random),
-      );
-      combinedPool.write(config.getPool(PasswordCategory.uppercase));
-    }
-
-    if (config.includeLowercase) {
-      guaranteedCharacters.add(
-        _getRandomChar(config.getPool(PasswordCategory.lowercase), random),
-      );
-      combinedPool.write(config.getPool(PasswordCategory.lowercase));
-    }
-
-    if (config.includeNumbers) {
-      guaranteedCharacters.add(
-        _getRandomChar(config.getPool(PasswordCategory.numbers), random),
-      );
-      combinedPool.write(config.getPool(PasswordCategory.numbers));
-    }
-
-    if (config.includeSpecial) {
-      guaranteedCharacters.add(
-        _getRandomChar(config.getPool(PasswordCategory.special), random),
-      );
-      combinedPool.write(config.getPool(PasswordCategory.special));
-    }
-
-    if (config.includeSpecialStrict) {
-      guaranteedCharacters.add(
-        _getRandomChar(config.getPool(PasswordCategory.specialStrict), random),
-      );
-      combinedPool.write(config.getPool(PasswordCategory.specialStrict));
+    for (final category in PasswordCategory.values) {
+      if (!config.isCategoryEnabled(category)) continue;
+      final pool = config.getPool(category);
+      guaranteedCharacters.add(_getRandomChar(pool, random));
+      combinedPool.write(pool);
     }
 
     final String poolString = combinedPool.toString();

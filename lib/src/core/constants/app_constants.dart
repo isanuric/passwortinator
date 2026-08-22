@@ -34,24 +34,11 @@ class AppConstants {
   /// and can be enabled explicitly when broad compatibility is not required.
   static const String strictSpecialCharacters = r'''"'`\,./:;<>|{}[]''';
 
-  /// Character pool sizes for entropy calculation.
-  static const int lowercasePoolSize = 26;
-  static const int uppercasePoolSize = 26;
-  static const int numberPoolSize = 10;
-  static const int specialPoolSize = 16;
-  static const int strictSpecialPoolSize = 16;
-
   /// Characters that look alike and are frequently confused when typing or
   /// reading a password (0/O, 1/l/I). Excluding them is an option in
   /// professional generators (1Password, Bitwarden, KeePass) to make
   /// passwords easier to read aloud and retype.
   static const String ambiguousCharacters = 'IOlo10';
-
-  /// Number of ambiguous characters removed from each pool when the
-  /// `excludeAmbiguous` option is enabled.
-  static const int ambiguousUppercaseCount = 2; // I, O
-  static const int ambiguousLowercaseCount = 2; // l, o
-  static const int ambiguousNumberCount = 2; // 1, 0
 
   /// Entropy thresholds in bits.
   static const double weakThreshold = 50.0;

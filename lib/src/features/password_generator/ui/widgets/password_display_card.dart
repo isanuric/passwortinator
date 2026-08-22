@@ -24,7 +24,6 @@ class PasswordDisplayCard extends ConsumerWidget {
       ),
     );
     final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SurfaceCard(
       glow: true,
@@ -53,17 +52,10 @@ class PasswordDisplayCard extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: isDark
-                            ? [
-                                cs.surfaceContainerHigh.withValues(alpha: 0.45),
-                                cs.surfaceContainerHigh.withValues(alpha: 0.12),
-                              ]
-                            : [
-                                cs.surfaceContainerHighest
-                                    .withValues(alpha: 0.55),
-                                cs.surfaceContainerHighest
-                                    .withValues(alpha: 0.25),
-                              ],
+                        colors: [
+                          cs.surfaceContainerHigh.withValues(alpha: 0.45),
+                          cs.surfaceContainerHigh.withValues(alpha: 0.12),
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(

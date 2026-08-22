@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Central, premium design system for the app (Material 3).
 ///
-/// Provides a refined color scheme, soft glass surfaces, brand gradients and
-/// consistent component themes for light and dark mode.
+/// Provides a refined color scheme, soft glass surfaces and brand gradients.
+/// The app always renders in the dark brand theme (see [PasswordGeneratorApp]),
+/// so this only builds a dark [ThemeData].
 class AppTheme {
   AppTheme._();
 
@@ -21,12 +22,11 @@ class AppTheme {
     colors: [Color(0xFF2FB3FF), Color(0xFF5B4BE6)],
   );
 
-  static ThemeData get lightTheme => _build(Brightness.light);
-  static ThemeData get darkTheme => _build(Brightness.dark);
+  static ThemeData get darkTheme => _build();
 
-  static ThemeData _build(Brightness brightness) {
-    final isDark = brightness == Brightness.dark;
-    final scheme = _colorScheme(isDark);
+  static ThemeData _build() {
+    const brightness = Brightness.dark;
+    final scheme = _colorScheme();
     final baseText = ThemeData(brightness: brightness).textTheme;
     final textTheme = baseText.copyWith(
       headlineSmall: baseText.headlineSmall
@@ -98,7 +98,7 @@ class AppTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           backgroundColor: scheme.surfaceContainerHigh.withValues(
-            alpha: isDark ? 0.6 : 0.85,
+            alpha: 0.6,
           ),
           foregroundColor: scheme.primary,
           shape: RoundedRectangleBorder(
@@ -136,56 +136,30 @@ class AppTheme {
     );
   }
 
-  static ColorScheme _colorScheme(bool isDark) {
-    if (isDark) {
-      return const ColorScheme.dark(
-        primary: Color(0xFF8B7DFF),
-        onPrimary: Color(0xFF17103A),
-        primaryContainer: Color(0xFF2E2450),
-        onPrimaryContainer: Color(0xFFE3DEFF),
-        secondary: Color(0xFF4FD1FF),
-        onSecondary: Color(0xFF00344A),
-        secondaryContainer: Color(0xFF103A52),
-        onSecondaryContainer: Color(0xFFC6EEFF),
-        tertiary: Color(0xFFFF8AC2),
-        onTertiary: Color(0xFF54262F),
-        error: Color(0xFFFF6B81),
-        onError: Color(0xFF49040F),
-        surface: Color(0xFF070B16),
-        onSurface: Color(0xFFE9EDFB),
-        surfaceContainerLowest: Color(0xFF131A2E),
-        surfaceContainerLow: Color(0xFF111628),
-        surfaceContainerHigh: Color(0xFF1C2440),
-        surfaceContainerHighest: Color(0xFF1D2440),
-        onSurfaceVariant: Color(0xFF9AA4C4),
-        outline: Color(0xFF3A4263),
-        outlineVariant: Color(0xFF252C47),
-        shadow: Color(0xFF000000),
-      );
-    }
-    return const ColorScheme.light(
-      primary: Color(0xFF5A4BE6),
-      onPrimary: Color(0xFFFFFFFF),
-      primaryContainer: Color(0xFFE1DEFF),
-      onPrimaryContainer: Color(0xFF19104A),
-      secondary: Color(0xFF0086C3),
-      onSecondary: Color(0xFFFFFFFF),
-      secondaryContainer: Color(0xFFD5ECFF),
-      onSecondaryContainer: Color(0xFF00283D),
-      tertiary: Color(0xFFB34E86),
-      onTertiary: Color(0xFFFFFFFF),
-      error: Color(0xFFB3261E),
-      onError: Color(0xFFFFFFFF),
-      surface: Color(0xFFF4F6FC),
-      onSurface: Color(0xFF141829),
-      surfaceContainerLowest: Color(0xFFFFFFFF),
-      surfaceContainerLow: Color(0xFFEFF1FA),
-      surfaceContainerHigh: Color(0xFFE5E8F5),
-      surfaceContainerHighest: Color(0xFFE5E8F5),
-      onSurfaceVariant: Color(0xFF4E5575),
-      outline: Color(0xFFB9C0DD),
-      outlineVariant: Color(0xFFD8DCF0),
-      shadow: Color(0xFF0C0D1A),
+  static ColorScheme _colorScheme() {
+    return const ColorScheme.dark(
+      primary: Color(0xFF8B7DFF),
+      onPrimary: Color(0xFF17103A),
+      primaryContainer: Color(0xFF2E2450),
+      onPrimaryContainer: Color(0xFFE3DEFF),
+      secondary: Color(0xFF4FD1FF),
+      onSecondary: Color(0xFF00344A),
+      secondaryContainer: Color(0xFF103A52),
+      onSecondaryContainer: Color(0xFFC6EEFF),
+      tertiary: Color(0xFFFF8AC2),
+      onTertiary: Color(0xFF54262F),
+      error: Color(0xFFFF6B81),
+      onError: Color(0xFF49040F),
+      surface: Color(0xFF070B16),
+      onSurface: Color(0xFFE9EDFB),
+      surfaceContainerLowest: Color(0xFF131A2E),
+      surfaceContainerLow: Color(0xFF111628),
+      surfaceContainerHigh: Color(0xFF1C2440),
+      surfaceContainerHighest: Color(0xFF1D2440),
+      onSurfaceVariant: Color(0xFF9AA4C4),
+      outline: Color(0xFF3A4263),
+      outlineVariant: Color(0xFF252C47),
+      shadow: Color(0xFF000000),
     );
   }
 }

@@ -3,41 +3,11 @@ import '../../../core/constants/app_constants.dart';
 
 /// Available character categories for password generation.
 enum PasswordCategory {
-  uppercase(
-    title: 'Uppercase letters',
-    subtitle: 'A-Z',
-    example: 'ABC...',
-  ),
-  lowercase(
-    title: 'Lowercase letters',
-    subtitle: 'a-z',
-    example: 'abc...',
-  ),
-  numbers(
-    title: 'Numbers',
-    subtitle: '0-9',
-    example: '123...',
-  ),
-  special(
-    title: 'Special characters',
-    subtitle: r'!@#$%^&*...',
-    example: '!@#...',
-  ),
-  specialStrict(
-    title: 'Strict special characters',
-    subtitle: r'''"'\`/<>|{}...''',
-    example: r'''"'\''',
-  );
-
-  const PasswordCategory({
-    required this.title,
-    required this.subtitle,
-    required this.example,
-  });
-
-  final String title;
-  final String subtitle;
-  final String example;
+  uppercase,
+  lowercase,
+  numbers,
+  special,
+  specialStrict,
 }
 
 /// Immutable configuration model for password generation parameters.
@@ -92,14 +62,14 @@ class PasswordConfig {
     }
   }
 
+  static final RegExp _ambiguousPattern =
+      RegExp('[${AppConstants.ambiguousCharacters}]');
+
   /// The effective character pool for [category], honoring [excludeAmbiguous].
   String getPool(PasswordCategory category) {
     final raw = rawCharacters(category);
     if (!excludeAmbiguous) return raw;
-    return raw.replaceAll(
-      RegExp('[${AppConstants.ambiguousCharacters}]'),
-      '',
-    );
+    return raw.replaceAll(_ambiguousPattern, '');
   }
 
   /// Returns the number of currently active character categories.
@@ -119,38 +89,12 @@ class PasswordConfig {
   /// from the pool sizes so the displayed entropy stays honest.
   int get totalPoolSize {
     int poolSize = 0;
-    if (includeUppercase) {
-      poolSize += _poolSizeFor(PasswordCategory.uppercase);
-    }
-    if (includeLowercase) {
-      poolSize += _poolSizeFor(PasswordCategory.lowercase);
-    }
-    if (includeNumbers) {
-      poolSize += _poolSizeFor(PasswordCategory.numbers);
-    }
-    if (includeSpecial) {
-      poolSize += _poolSizeFor(PasswordCategory.special);
-    }
-    if (includeSpecialStrict) {
-      poolSize += _poolSizeFor(PasswordCategory.specialStrict);
+    for (final category in PasswordCategory.values) {
+      if (isCategoryEnabled(category)) {
+        poolSize += getPool(category).length;
+      }
     }
     return poolSize;
-  }
-
-  int _poolSizeFor(PasswordCategory category) {
-    final raw = rawCharacters(category).length;
-    if (!excludeAmbiguous) return raw;
-    switch (category) {
-      case PasswordCategory.uppercase:
-        return raw - AppConstants.ambiguousUppercaseCount;
-      case PasswordCategory.lowercase:
-        return raw - AppConstants.ambiguousLowercaseCount;
-      case PasswordCategory.numbers:
-        return raw - AppConstants.ambiguousNumberCount;
-      case PasswordCategory.special:
-      case PasswordCategory.specialStrict:
-        return raw; // no ambiguous special characters are excluded
-    }
   }
 
   /// Checks whether a specific category is enabled.

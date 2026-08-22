@@ -71,7 +71,7 @@ class StrengthIndicator extends StatelessWidget {
         curve: Curves.easeOutCubic,
         height: 5,
         decoration: BoxDecoration(
-          color: isActive ? null : _inactiveColor(context),
+          color: isActive ? null : Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(4),
           gradient: isActive
               ? LinearGradient(
@@ -86,12 +86,5 @@ class StrengthIndicator extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _inactiveColor(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.black.withValues(alpha: 0.06);
   }
 }

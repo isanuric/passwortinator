@@ -20,32 +20,26 @@ class SurfaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final cs = theme.colorScheme;
+    final cs = Theme.of(context).colorScheme;
 
     return Container(
       decoration: BoxDecoration(
-        color: cs.surfaceContainerLowest.withValues(alpha: isDark ? 0.68 : 1),
+        color: cs.surfaceContainerLowest.withValues(alpha: 0.68),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: isDark ? 0.5 : 0.6),
+          color: cs.outlineVariant.withValues(alpha: 0.5),
         ),
         boxShadow: glow
             ? [
                 BoxShadow(
-                  color: cs.primary.withValues(
-                    alpha: isDark ? 0.24 : 0.10,
-                  ),
+                  color: cs.primary.withValues(alpha: 0.24),
                   blurRadius: 28,
                   offset: const Offset(0, 12),
                 ),
               ]
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(
-                    alpha: isDark ? 0.35 : 0.06,
-                  ),
+                  color: Colors.black.withValues(alpha: 0.35),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),

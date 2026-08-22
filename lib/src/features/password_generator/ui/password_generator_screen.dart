@@ -25,14 +25,14 @@ class PasswordGeneratorScreen extends ConsumerWidget {
           shaderCallback: (bounds) => AppTheme.primaryGradient.createShader(
             bounds,
           ),
-          child: const Text(
+          // ShaderMask with srcIn only needs the text's alpha channel, so any
+          // opaque color works here — white avoids clipping the shader colors.
+          child: Text(
             'Passwortinator',
-            style: TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.4,
-              color: Colors.white,
-            ),
+            style: Theme.of(context)
+                .appBarTheme
+                .titleTextStyle
+                ?.copyWith(color: Colors.white),
           ),
         ),
       ),
@@ -51,34 +51,36 @@ class PasswordGeneratorScreen extends ConsumerWidget {
                         vertical: 10.0,
                       ),
                       // Force the column to at least fill the viewport height
-                      // (minus the scroll padding), so the Spacer below pushes
-                      // the action button to the bottom edge.
+                      // (minus the scroll padding), so spaceBetween pushes the
+                      // action button to the bottom edge.
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           minHeight: viewportConstraints.maxHeight - 20,
                         ),
-                        child: const IntrinsicHeight(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // 1. Output – password with inline copy & strength
-                              PasswordDisplayCard(),
-                              SizedBox(height: 10),
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // 1. Output – password with inline copy & strength
+                                PasswordDisplayCard(),
+                                SizedBox(height: 10),
 
-                              // 2. Controls – length slider + character chips
-                              LengthSlider(),
-                              SizedBox(height: 10),
-                              OptionsCard(),
+                                // 2. Controls – length slider + character chips
+                                LengthSlider(),
+                                SizedBox(height: 10),
+                                OptionsCard(),
+                              ],
+                            ),
 
-                              // Flexible gap: absorbs all leftover space so the
-                              // action button sits flush at the bottom edge.
-                              Spacer(),
-                              SizedBox(height: 10),
-
-                              // 3. Primary action – pinned to the bottom
-                              ActionButtons(),
-                            ],
-                          ),
+                            // 3. Primary action – pinned to the bottom
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: ActionButtons(),
+                            ),
+                          ],
                         ),
                       ),
                     );

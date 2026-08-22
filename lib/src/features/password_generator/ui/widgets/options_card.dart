@@ -14,12 +14,22 @@ import '../../models/password_config.dart';
 class OptionsCard extends ConsumerWidget {
   const OptionsCard({super.key});
 
+  /// The four main categories shown as chips, with their compact labels.
+  static const List<(PasswordCategory, String)> _chipCategories = [
+    (PasswordCategory.uppercase, 'A-Z'),
+    (PasswordCategory.lowercase, 'a-z'),
+    (PasswordCategory.numbers, '0-9'),
+    (PasswordCategory.special, '!@#'),
+  ];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(
       passwordGeneratorProvider.select((s) => s.config),
     );
     final notifier = ref.read(passwordGeneratorProvider.notifier);
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
 
     return SurfaceCard(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -31,34 +41,14 @@ class OptionsCard extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildCategoryChip(
-                context: context,
-                config: config,
-                category: PasswordCategory.uppercase,
-                label: 'A-Z',
-                notifier: notifier,
-              ),
-              _buildCategoryChip(
-                context: context,
-                config: config,
-                category: PasswordCategory.lowercase,
-                label: 'a-z',
-                notifier: notifier,
-              ),
-              _buildCategoryChip(
-                context: context,
-                config: config,
-                category: PasswordCategory.numbers,
-                label: '0-9',
-                notifier: notifier,
-              ),
-              _buildCategoryChip(
-                context: context,
-                config: config,
-                category: PasswordCategory.special,
-                label: '!@#',
-                notifier: notifier,
-              ),
+              for (final (category, label) in _chipCategories)
+                _buildCategoryChip(
+                  cs: cs,
+                  config: config,
+                  category: category,
+                  label: label,
+                  notifier: notifier,
+                ),
             ],
           ),
           const SizedBox(height: 10),
@@ -66,27 +56,23 @@ class OptionsCard extends ConsumerWidget {
 
           // Extra options with explanation, each on its own row
           _buildToggleRow(
-            context: context,
+            theme: theme,
             icon: Icons.terminal_rounded,
-            iconColor: config.includeSpecialStrict
-                ? Theme.of(context).colorScheme.secondary
-                : null,
+            iconColor: config.includeSpecialStrict ? cs.secondary : null,
             // Show the actual characters instead of a name, so the user sees
             // exactly which symbols get added.
             title: AppConstants.strictSpecialCharacters,
-            description: 'maybe not allowed by some systems',
+            description: 'not allowed by some systems',
             value: config.includeSpecialStrict,
             onChanged: (v) =>
                 notifier.toggleCategory(PasswordCategory.specialStrict, v),
           ),
           _buildToggleRow(
-            context: context,
+            theme: theme,
             icon: Icons.remove_red_eye_outlined,
-            iconColor: config.excludeAmbiguous
-                ? Theme.of(context).colorScheme.secondary
-                : null,
+            iconColor: config.excludeAmbiguous ? cs.secondary : null,
             title: '0O 1l',
-            description: 'Skip similar characters (0/O, 1/l/I).',
+            description: 'skip similar (0/O, 1/l/I)',
             value: config.excludeAmbiguous,
             onChanged: notifier.setExcludeAmbiguous,
           ),
@@ -96,13 +82,12 @@ class OptionsCard extends ConsumerWidget {
   }
 
   Widget _buildCategoryChip({
-    required BuildContext context,
+    required ColorScheme cs,
     required PasswordConfig config,
     required PasswordCategory category,
     required String label,
     required PasswordGeneratorNotifier notifier,
   }) {
-    final cs = Theme.of(context).colorScheme;
     final isEnabled = config.isCategoryEnabled(category);
     final canToggle = config.canDisableCategory(category);
 
@@ -137,7 +122,7 @@ class OptionsCard extends ConsumerWidget {
 
   /// A full-width toggle row: icon, title, short explanation and a switch.
   Widget _buildToggleRow({
-    required BuildContext context,
+    required ThemeData theme,
     required IconData icon,
     required String title,
     required String description,
@@ -145,7 +130,6 @@ class OptionsCard extends ConsumerWidget {
     required void Function(bool) onChanged,
     Color? iconColor,
   }) {
-    final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
     return Padding(
